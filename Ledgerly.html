@@ -1,0 +1,1219 @@
+<!doctype html>
+<html lang="en-NZ">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#c1a7e2" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#1a1426" media="(prefers-color-scheme: dark)" />
+  <title>Ledgerly</title>
+
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Ledgerly">
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f4f0fa;
+      --card:#ffffff;
+      --text:#000000;
+      --muted:rgba(0,0,0,.62);
+      --muted2:rgba(0,0,0,.42);
+      --border:rgba(0,0,0,.08);
+      --primary:#c1a7e2;
+      --primary-dark:#af90d8;
+      --primary-soft:#ece4f7;
+      --shadow:0 12px 32px rgba(85, 58, 125, .10);
+      --shadow-sm:0 6px 16px rgba(85,58,125,.08);
+      --input-bg:#ffffff;
+      --chart-bg:#ffffff;
+      --nav-bg:rgba(255,255,255,.92);
+
+      --paid-bg:#dcfce7;        --paid-text:#15803d;
+      --due-bg:#fef3c7;         --due-text:#b45309;
+      --overdue-bg:#fee2e2;     --overdue-text:#b91c1c;
+      --upcoming-bg:#e2e8f0;    --upcoming-text:#475569;
+      --paused-bg:#ede9fe;      --paused-text:#6d28d9;
+      --cancelled-bg:#f3f4f6;   --cancelled-text:#4b5563;
+      --archived-bg:#f1f5f9;    --archived-text:#334155;
+      --soon-text:#7c3aed;
+    }
+    [data-theme="dark"]{
+      --bg:#15101f;
+      --card:#211a30;
+      --text:#f3eefa;
+      --muted:rgba(243,238,250,.66);
+      --muted2:rgba(243,238,250,.42);
+      --border:rgba(255,255,255,.10);
+      --primary:#c1a7e2;
+      --primary-dark:#a98fd2;
+      --primary-soft:#352a4a;
+      --shadow:0 12px 32px rgba(0,0,0,.45);
+      --shadow-sm:0 6px 16px rgba(0,0,0,.35);
+      --input-bg:#2a2240;
+      --chart-bg:#211a30;
+      --nav-bg:rgba(28,21,42,.92);
+
+      --paid-bg:#16351f;        --paid-text:#6ee7a0;
+      --due-bg:#3a2c0e;         --due-text:#fbcd6a;
+      --overdue-bg:#3a1414;     --overdue-text:#f7a1a1;
+      --upcoming-bg:#2a3240;    --upcoming-text:#aebfd1;
+      --paused-bg:#2e2547;      --paused-text:#c4b1ee;
+      --cancelled-bg:#262531;   --cancelled-text:#aeb2c0;
+      --archived-bg:#222732;    --archived-text:#aebccb;
+      --soon-text:#c4b1ee;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text)}
+    body{font-family:Montserrat,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;transition:background .25s ease,color .25s ease}
+    .heading-font{font-family:"Big Caslon","Libre Baskerville",Georgia,serif;font-weight:400;letter-spacing:.01em}
+    .app{max-width:470px;margin:0 auto;min-height:100vh;padding:env(safe-area-inset-top) 16px calc(104px + env(safe-area-inset-bottom));background:var(--bg)}
+
+    .top{position:sticky;top:0;z-index:20;background:linear-gradient(180deg, color-mix(in srgb, var(--bg) 98%, transparent), color-mix(in srgb, var(--bg) 88%, transparent));backdrop-filter:blur(12px);padding:12px 0 12px}
+    .hero{display:flex;align-items:center;gap:12px;padding:14px 16px;margin-top:10px;background:var(--card);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow)}
+    .hero-mark{width:46px;height:46px;border-radius:14px;flex-shrink:0;object-fit:cover;background:var(--primary-soft);border:1px solid var(--border)}
+    .hero-copy{min-width:0;flex:1}
+    .hero-title{font-size:28px;line-height:1;margin:0 0 3px}
+    .hero-tagline{font-size:12.5px;line-height:1.35;color:var(--muted);font-weight:500}
+    .theme-toggle{flex-shrink:0;width:42px;height:42px;border-radius:13px;background:var(--primary-soft);color:var(--text);font-size:19px;line-height:0;border:1px solid var(--border);box-shadow:none}
+    .theme-toggle:hover{filter:brightness(.96);background:var(--primary-soft)}
+
+    .quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+    .quick-card{padding:10px 8px;text-align:center;background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-sm);font-size:11px;color:var(--muted)}
+    .quick-card strong{display:block;color:var(--text);font-size:18px;margin-bottom:2px;font-weight:800}
+
+    .screen-heading{display:flex;justify-content:space-between;align-items:end;gap:10px;margin:18px 2px 12px}
+    .screen-heading h2{margin:0;font-size:21px;font-weight:800}
+    .screen-heading p{margin:0;font-size:12px;color:var(--muted)}
+
+    .banner{display:flex;gap:10px;align-items:flex-start;margin-top:12px;padding:12px 14px;border-radius:18px;border:1px solid var(--border);box-shadow:var(--shadow);font-size:13px;line-height:1.4;background:var(--card)}
+    .banner.warn{background:var(--due-bg);color:var(--due-text);border-color:transparent}
+    .banner .banner-body{flex:1}
+    .banner .banner-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
+    .banner button{padding:8px 10px;font-size:12px;border-radius:12px}
+    .banner-close{background:transparent;border:none;box-shadow:none;color:inherit;font-size:18px;line-height:1;padding:0 4px}
+
+    /* Spend summary */
+    .spend-summary{display:flex;align-items:stretch;gap:0;margin-top:16px;padding:18px 16px}
+    .spend-summary .ss-col{flex:1;text-align:center}
+    .spend-summary .ss-div{width:1px;background:var(--border);margin:2px 6px}
+    .ss-label{font-size:12px;color:var(--muted);font-weight:600}
+    .ss-value{font-size:30px;font-weight:800;letter-spacing:-.02em;margin-top:6px}
+    .ss-sub{font-size:11px;color:var(--muted2);margin-top:2px}
+
+    .footer-rights{text-align:center;font-size:11px;color:var(--muted2);line-height:1.4;margin-top:22px;padding-bottom:8px}
+    .tabs-note{display:none}
+
+    .card{background:var(--card);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow)}
+    .metric-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px}
+    .metric{padding:15px}
+    .metric .label{font-size:12px;color:var(--muted)}
+    .metric .value{font-size:23px;font-weight:700;letter-spacing:-.02em;margin-top:8px}
+    .toolbar{display:block;padding:12px;margin:14px 0 12px}
+    input,select,button,textarea{font:inherit}
+    input,select,textarea{width:100%;padding:12px 14px;border-radius:16px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);outline:none}
+    input::placeholder{color:var(--muted2)}
+    input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--primary-dark);outline-offset:2px}
+    button{border:none;background:var(--primary);color:#1a1024;padding:12px 14px;border-radius:16px;font-weight:700;cursor:pointer}
+    button:hover{background:var(--primary-dark)}
+    .btn-secondary{background:var(--card);border:1px solid var(--border);color:var(--text)}
+    .btn-secondary:hover{background:var(--primary-soft)}
+    .btn-danger{background:var(--overdue-bg);color:var(--overdue-text)}
+    .btn-danger:hover{filter:brightness(.95)}
+    .btn-small{padding:10px 12px;font-size:13px;border-radius:14px}
+    .filter-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+    .list{display:flex;flex-direction:column;gap:12px}
+    .item{position:relative;overflow:hidden}
+    .swipe-bg{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center;padding:0 14px;pointer-events:none}
+    .swipe-pill{padding:10px 12px;border-radius:999px;background:var(--card);border:1px solid var(--border);font-size:12px;font-weight:700;color:var(--text)}
+    .swipe-pill.primary{background:var(--primary);border-color:transparent;color:#1a1024}
+    .item-content{position:relative;background:var(--card);padding:15px;border-radius:22px;transition:transform .18s ease;touch-action:pan-y}
+    .row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+    .name{font-size:18px;line-height:1.2;margin:0}
+    .meta{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:9px;color:var(--muted);font-size:13px;align-items:center}
+    .amt-big{font-weight:800;font-size:15px;color:var(--text)}
+    .rel{font-weight:700}
+    .rel.overdue{color:var(--overdue-text)} .rel.due{color:var(--due-text)} .rel.soon{color:var(--soon-text)} .rel.later{color:var(--muted)}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .chip{padding:5px 9px;border-radius:999px;background:var(--primary-soft);font-size:11px;font-weight:600;color:var(--text)}
+    .status{display:inline-flex;align-items:center;padding:6px 11px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+    .paid{background:var(--paid-bg);color:var(--paid-text)}
+    .due{background:var(--due-bg);color:var(--due-text)}
+    .overdue{background:var(--overdue-bg);color:var(--overdue-text)}
+    .upcoming{background:var(--upcoming-bg);color:var(--upcoming-text)}
+    .paused{background:var(--paused-bg);color:var(--paused-text)}
+    .cancelled{background:var(--cancelled-bg);color:var(--cancelled-text)}
+    .archived{background:var(--archived-bg);color:var(--archived-text)}
+    .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+
+    /* Upcoming view */
+    .up-summary{display:flex;gap:0;padding:16px;margin-top:4px}
+    .up-summary .ss-col{flex:1;text-align:center}
+    .up-group{margin-top:18px}
+    .up-group-title{font-size:13px;font-weight:800;color:var(--muted);margin:0 2px 10px;text-transform:uppercase;letter-spacing:.05em}
+    .up-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 15px;margin-bottom:10px;cursor:pointer}
+    .up-name{font-size:16px;margin:0 0 3px}
+    .up-when{font-size:12.5px;font-weight:600}
+    .up-when.overdue{color:var(--overdue-text)} .up-when.due{color:var(--due-text)} .up-when.soon{color:var(--soon-text)} .up-when.later{color:var(--muted)}
+    .up-amt{font-weight:800;font-size:16px;white-space:nowrap}
+
+    .analytics-grid{display:grid;gap:12px;margin-top:16px}
+    .chart-card{padding:14px}
+    .chart-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+    .chart-title h3{margin:0;font-size:18px}
+    .pill-toggle{display:flex;gap:6px;background:var(--primary-soft);padding:4px;border-radius:999px}
+    .pill-toggle button{background:transparent;border:none;box-shadow:none;padding:8px 12px;border-radius:999px;font-size:12px;color:var(--text)}
+    .pill-toggle button.active{background:var(--card);border:1px solid var(--border)}
+    canvas{display:block;width:100%;background:var(--chart-bg);border-radius:16px}
+    .history-list{display:flex;flex-direction:column;gap:10px}
+    .history-item{display:flex;justify-content:space-between;gap:12px;padding:12px;border-radius:16px;background:var(--primary-soft);border:1px solid var(--border);font-size:13px}
+    .footer-note{font-size:12px;color:var(--muted);line-height:1.45;text-align:center;margin-top:16px}
+
+    /* Bottom navigation */
+    .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;align-items:center;justify-content:space-around;
+      max-width:470px;margin:0 auto;padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+      background:var(--nav-bg);backdrop-filter:blur(16px);border-top:1px solid var(--border)}
+    .nav-item{flex:1;background:transparent;border:none;box-shadow:none;display:flex;flex-direction:column;align-items:center;gap:3px;
+      color:var(--muted2);font-size:10.5px;font-weight:700;padding:4px 0}
+    .nav-item .nav-ico{font-size:20px;line-height:1;filter:grayscale(.4);opacity:.7}
+    .nav-item.active{color:var(--text)}
+    .nav-item.active .nav-ico{filter:none;opacity:1}
+    .nav-add{width:54px;height:54px;border-radius:999px;font-size:28px;line-height:0;color:#1a1024;
+      box-shadow:0 8px 22px rgba(193,167,226,.5);margin:0 4px;flex:0 0 auto}
+
+    .modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.40);display:flex;align-items:flex-end;justify-content:center;padding:12px;z-index:50}
+    .modal{width:100%;max-width:470px;max-height:92vh;overflow:auto;background:var(--card);padding:16px;border-radius:24px 24px 18px 18px;box-shadow:var(--shadow)}
+    .modal h2{margin:4px 0 14px;font-size:24px}
+    .grid{display:grid;gap:12px}
+    .row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{display:block;margin:0 0 6px 2px;font-size:13px;color:var(--muted)}
+    .toggle{display:flex;align-items:flex-start;gap:10px;padding:12px;border-radius:16px;border:1px solid var(--border)}
+    .toggle input{width:18px;height:18px;margin-top:2px}
+    .helper{font-size:12px;color:var(--muted);line-height:1.4;margin-top:3px}
+    .hidden{display:none !important}
+    .detail-top{margin-top:8px}
+    .detail-back{margin-bottom:12px}
+    .detail-grid{display:grid;gap:12px}
+    .detail-card{padding:15px}
+    .detail-card h3{margin:0 0 10px;font-size:18px;font-weight:700}
+    .keyvals{display:grid;gap:10px}
+    .keyval{display:flex;justify-content:space-between;gap:12px;font-size:14px}
+    .muted{color:var(--muted)}
+    .empty{padding:26px 16px;text-align:center;color:var(--muted)}
+    .empty-onboard{padding:30px 20px;text-align:center}
+    .empty-onboard .big{font-size:40px;margin-bottom:8px}
+    .empty-onboard h3{margin:0 0 6px;font-size:20px}
+    .empty-onboard p{margin:0 auto 16px;max-width:300px;color:var(--muted);font-size:14px;line-height:1.5}
+    .empty-onboard .inline-actions{justify-content:center}
+    .inline-actions{display:flex;flex-wrap:wrap;gap:8px}
+    .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+    .toast{position:fixed;left:50%;transform:translateX(-50%) translateY(20px);bottom:calc(86px + env(safe-area-inset-bottom));
+      background:var(--text);color:var(--bg);padding:12px 18px;border-radius:14px;font-size:13px;font-weight:600;z-index:60;
+      box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;max-width:88%;text-align:center}
+    .toast.show{opacity:.97;transform:translateX(-50%) translateY(0)}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="top">
+      <div class="hero">
+        <img class="hero-mark" src="icon.png" alt="" onerror="this.style.visibility='hidden'">
+        <div class="hero-copy">
+          <h1 class="heading-font hero-title">Ledgerly</h1>
+          <div class="hero-tagline">Structure your subscriptions. Control your spend.</div>
+        </div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+      </div>
+      <div class="quick-actions">
+        <div class="quick-card"><strong id="quickDueCount">0</strong>Due / overdue</div>
+        <div class="quick-card"><strong id="quickPaidCount">0</strong>Paid this month</div>
+        <div class="quick-card"><strong id="quickActiveCount">0</strong>Active subs</div>
+      </div>
+    </div>
+
+    <div id="bannerArea"></div>
+
+    <!-- SUBSCRIPTIONS -->
+    <section id="subscriptionsView">
+      <div class="spend-summary card">
+        <div class="ss-col"><div class="ss-label">Per month</div><div class="ss-value" id="permonth">$0</div><div class="ss-sub">all active</div></div>
+        <div class="ss-div"></div>
+        <div class="ss-col"><div class="ss-label">Per year</div><div class="ss-value" id="peryear">$0</div><div class="ss-sub">projected</div></div>
+      </div>
+
+      <div class="metric-grid">
+        <div class="card metric"><div class="label">Expected this month</div><div class="value" id="expectedMonth">$0.00</div></div>
+        <div class="card metric"><div class="label">Paid this month</div><div class="value" id="paidMonth">$0.00</div></div>
+        <div class="card metric"><div class="label">Overdue exposure</div><div class="value" id="overdueExposure">$0.00</div></div>
+        <div class="card metric"><div class="label">Outstanding</div><div class="value" id="varianceMonth">$0.00</div></div>
+      </div>
+
+      <div class="card toolbar">
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px;">
+          <input class="search" id="searchInput" placeholder="Search subscriptions" aria-label="Search subscriptions" style="flex:1" />
+          <button class="btn-secondary btn-small" id="clearFiltersBtn">Clear</button>
+        </div>
+        <div style="margin-bottom:10px;">
+          <select id="sortSelect" aria-label="Sort subscriptions">
+            <option value="due">Sort: Due date (soonest)</option>
+            <option value="amount">Sort: Amount (high–low)</option>
+            <option value="name">Sort: Name (A–Z)</option>
+            <option value="added">Sort: Recently added</option>
+          </select>
+        </div>
+        <div class="filter-grid">
+          <select id="statusFilter" aria-label="Filter by status">
+            <option value="All">All statuses</option>
+            <option value="Upcoming">Upcoming</option>
+            <option value="Due">Due</option>
+            <option value="Overdue">Overdue</option>
+            <option value="Paid">Paid</option>
+            <option value="Paused">Paused</option>
+            <option value="Cancelled">Cancelled</option>
+            <option value="Archived">Archived</option>
+          </select>
+          <select id="categoryFilter" aria-label="Filter by category">
+            <option value="All">All categories</option>
+            <option value="Business">Business</option>
+            <option value="Personal">Personal</option>
+            <option value="Home">Home</option>
+          </select>
+          <select id="cycleFilter" aria-label="Filter by billing cycle">
+            <option value="All">All billing cycles</option>
+            <option value="Weekly">Weekly</option>
+            <option value="Monthly">Monthly</option>
+            <option value="Yearly">Yearly</option>
+          </select>
+          <select id="claimableFilter" aria-label="Filter by claimable">
+            <option value="All">All claimable states</option>
+            <option value="Claimable">Claimable only</option>
+            <option value="NonClaimable">Non-claimable only</option>
+          </select>
+          <select id="stateFilter" aria-label="Filter by active state">
+            <option value="All">All active states</option>
+            <option value="Active">Active only</option>
+            <option value="Inactive">Paused / Cancelled / Archived</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="screen-heading"><div><h2>Your subscriptions</h2><p>Swipe right to pay · left for details</p></div></div>
+      <div class="list" id="subscriptionList"></div>
+    </section>
+
+    <!-- UPCOMING -->
+    <section id="upcomingView" class="hidden">
+      <div class="screen-heading"><div><h2>Upcoming</h2><p>What's due, and when</p></div></div>
+      <div class="card up-summary">
+        <div class="ss-col"><div class="ss-label">Next 30 days</div><div class="ss-value" id="upcomingTotal">$0.00</div></div>
+        <div class="ss-div"></div>
+        <div class="ss-col"><div class="ss-label">Overdue</div><div class="ss-value" id="upcomingOverdue">$0.00</div></div>
+      </div>
+      <div id="upcomingGroups"></div>
+    </section>
+
+    <!-- ANALYTICS -->
+    <section id="analyticsView" class="hidden">
+      <div class="screen-heading"><div><h2>Analytics</h2><p>Visualise spend, claimable totals, and trends</p></div></div>
+      <div class="metric-grid">
+        <div class="card metric"><div class="label">Business</div><div class="value" id="businessTotal">$0.00</div></div>
+        <div class="card metric"><div class="label">Personal</div><div class="value" id="personalTotal">$0.00</div></div>
+        <div class="card metric"><div class="label">Home</div><div class="value" id="homeTotal">$0.00</div></div>
+        <div class="card metric"><div class="label">Business claimable</div><div class="value" id="businessClaimableTotal">$0.00</div></div>
+      </div>
+      <div class="analytics-grid">
+        <div class="card chart-card">
+          <div class="chart-title">
+            <h3 class="heading-font">Expected vs paid</h3>
+            <div class="pill-toggle">
+              <button id="analyticsMonthlyBtn" class="active">This month</button>
+              <button id="analyticsYearlyBtn">This year</button>
+            </div>
+          </div>
+          <canvas id="summaryChart" height="230"></canvas>
+        </div>
+        <div class="card chart-card">
+          <div class="chart-title"><h3 class="heading-font">Spend by category</h3></div>
+          <canvas id="categoryChart" height="220"></canvas>
+        </div>
+        <div class="card chart-card">
+          <div class="chart-title"><h3 class="heading-font">Claimable vs non-claimable</h3></div>
+          <canvas id="claimableChart" height="220"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- HISTORY -->
+    <section id="historyView" class="hidden">
+      <div class="screen-heading"><div><h2>History</h2><p>Reminders, backups, and payment records</p></div></div>
+
+      <div class="card chart-card" style="margin-bottom:12px;">
+        <div class="chart-title"><h3 class="heading-font">Push notifications</h3></div>
+        <div class="helper" style="margin-bottom:10px;">A real notification when a payment is due — <strong>even when Ledgerly is closed.</strong> Requires the free backend (one-time setup) and the app added to your Home Screen.</div>
+        <div class="inline-actions"><button id="pushBtn">🔔 Enable push notifications</button></div>
+        <div class="helper" id="pushHelper" style="margin-top:8px;"></div>
+      </div>
+
+      <div class="card chart-card" style="margin-bottom:12px;">
+        <div class="chart-title"><h3 class="heading-font">Other reminders</h3></div>
+        <div class="helper" style="margin-bottom:10px;">No-setup options: add due dates to your iPhone Calendar, or get an alert when you next open the app.</div>
+        <div class="inline-actions">
+          <button class="btn-secondary btn-small" id="remindAllBtn">📅 Add all to Calendar</button>
+          <button class="btn-secondary btn-small" id="reminderBtn">🔔 In-app alerts</button>
+        </div>
+        <div class="helper" id="reminderHelper" style="margin-top:8px;"></div>
+      </div>
+
+      <div class="card chart-card" style="margin-bottom:12px;">
+        <div class="chart-title"><h3 class="heading-font">Your data</h3></div>
+        <div class="helper" style="margin-bottom:10px;">Stored only on this device. Back it up regularly so you don't lose it.</div>
+        <div class="inline-actions">
+          <button class="btn-secondary btn-small" id="exportBtn">⬇︎ Export backup</button>
+          <button class="btn-secondary btn-small" id="importBtn">⬆︎ Import backup</button>
+        </div>
+        <input type="file" id="importFile" accept="application/json,.json" class="visually-hidden" />
+      </div>
+
+      <div class="card chart-card">
+        <div class="chart-title"><h3 class="heading-font">Payment history</h3></div>
+        <select id="historyFilter" aria-label="Filter history by subscription">
+          <option value="All">All subscriptions</option>
+        </select>
+        <div class="history-list" id="historyList" style="margin-top:12px;"></div>
+      </div>
+    </section>
+
+    <!-- DETAIL -->
+    <section id="detailView" class="hidden">
+      <div class="detail-top">
+        <button class="btn-secondary btn-small detail-back" id="backToListBtn">← Back</button>
+        <div class="detail-grid">
+          <div class="card detail-card">
+            <div class="row">
+              <div>
+                <h2 class="heading-font" id="detailName" style="margin:0 0 8px;font-size:28px;"></h2>
+                <div id="detailStatus" class="status"></div>
+              </div>
+              <div class="inline-actions">
+                <button class="btn-small" id="detailMarkPaidBtn">Mark as paid</button>
+                <button class="btn-secondary btn-small" id="detailEditBtn">Edit</button>
+              </div>
+            </div>
+            <div class="chips" id="detailChips"></div>
+          </div>
+
+          <div class="card detail-card">
+            <h3 class="heading-font">Subscription settings</h3>
+            <div class="keyvals" id="detailSettings"></div>
+          </div>
+
+          <div class="card detail-card">
+            <h3 class="heading-font">Current cycle</h3>
+            <div class="keyvals" id="detailCycle"></div>
+            <div class="inline-actions" style="margin-top:12px;">
+              <button class="btn-secondary btn-small" id="detailRemindBtn">📅 Add Calendar reminder</button>
+            </div>
+            <div class="helper" style="margin-top:8px;">Adds a recurring event to your iPhone Calendar with an alert the day before and on the due date.</div>
+          </div>
+
+          <div class="card detail-card">
+            <h3 class="heading-font">Lifecycle state</h3>
+            <div class="inline-actions" style="margin-bottom:10px;">
+              <button class="btn-secondary btn-small" id="pauseBtn">Pause</button>
+              <button class="btn-secondary btn-small" id="resumeBtn">Resume</button>
+              <button class="btn-secondary btn-small" id="cancelBtnDetail">Cancel</button>
+              <button class="btn-secondary btn-small" id="archiveBtn">Archive</button>
+              <button class="btn-danger btn-small" id="deleteBtnDetail">Delete</button>
+            </div>
+            <div class="helper">Pause when billing is temporarily on hold. Cancel when it has ended. Archive to keep history without active tracking.</div>
+          </div>
+
+          <div class="card detail-card">
+            <h3 class="heading-font">Payment history</h3>
+            <div class="history-list" id="detailHistory"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-rights">
+      All subscriptions are manually added and require manual confirmation to be marked as paid.<br>
+      RV Creative &amp; Consulting 2025 - All Rights Reserved
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-tab="subscriptions"><span class="nav-ico">📋</span><span>Subs</span></button>
+    <button class="nav-item" data-tab="upcoming"><span class="nav-ico">📆</span><span>Upcoming</span></button>
+    <button class="nav-add" id="addBtn" aria-label="Add subscription">+</button>
+    <button class="nav-item" data-tab="analytics"><span class="nav-ico">📊</span><span>Stats</span></button>
+    <button class="nav-item" data-tab="history"><span class="nav-ico">🕘</span><span>History</span></button>
+  </nav>
+
+  <div class="modal-wrap hidden" id="modalWrap">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h2 class="heading-font" id="modalTitle">Add subscription</h2>
+      <div class="grid">
+        <div>
+          <label for="name">Name</label>
+          <input id="name" placeholder="e.g. Spotify" />
+        </div>
+        <div class="row-2">
+          <div><label for="amount">Amount</label><input id="amount" type="number" step="0.01" inputmode="decimal" placeholder="0.00" /></div>
+          <div><label for="dueDate">Current cycle due date</label><input id="dueDate" type="date" /></div>
+        </div>
+        <div class="row-2">
+          <div>
+            <label for="billingCycle">Billing cycle</label>
+            <select id="billingCycle"><option>Weekly</option><option selected>Monthly</option><option>Yearly</option></select>
+          </div>
+          <div>
+            <label for="category">Category</label>
+            <select id="category"><option>Business</option><option selected>Personal</option><option>Home</option></select>
+          </div>
+        </div>
+        <div class="row-2">
+          <div>
+            <label for="state">Lifecycle state</label>
+            <select id="state"><option selected>Active</option><option>Paused</option><option>Cancelled</option><option>Archived</option></select>
+          </div>
+          <div><label for="claimablePercent">Business claimable %</label><input id="claimablePercent" type="number" min="0" max="100" step="1" inputmode="numeric" placeholder="0" /></div>
+        </div>
+        <div><label for="claimableAmount">Claimable amount</label><input id="claimableAmount" disabled placeholder="$0.00" /></div>
+
+        <div class="toggle">
+          <input id="analyticsOnly" type="checkbox" />
+          <div><div><strong>Analytics only</strong></div><div class="helper">Counts in analytics but removes the paid queue action.</div></div>
+        </div>
+        <div class="toggle">
+          <input id="completedThisCycle" type="checkbox" />
+          <div><div><strong>Already paid this cycle</strong></div><div class="helper">Records this cycle as paid when entering an existing subscription.</div></div>
+        </div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button id="saveBtn">Save subscription</button>
+          <button class="btn-secondary" id="cancelModalBtn">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const STORAGE_KEY = "subscription-control-prototype-v3";
+const THEME_KEY = "ledgerly-theme";
+const BACKUP_KEY = "ledgerly-last-backup";
+const REMINDER_KEY = "ledgerly-last-reminder";
+const SEED_KEY = "ledgerly-seeded";
+
+// === Push backend — fill these in after deploying the Worker (see push-backend/README.md) ===
+const PUSH_CONFIG = {
+  backendUrl: "",       // e.g. "https://ledgerly-push.yourname.workers.dev"
+  vapidPublicKey: ""    // the VAPID public key (base64url) from setup
+};
+const PUSH_ENABLED_KEY = "ledgerly-push-enabled";
+const USER_ID_KEY = "ledgerly-user-id";
+
+const defaultData = [
+  { id:1, name:"Netflix", amount:27.99, billingCycle:"Monthly", category:"Personal", analyticsOnly:false, claimablePercent:0, lifecycleState:"Active", currentCycle:{ dueDate:"2026-04-15", status:"Due" }, payments:[] },
+  { id:2, name:"Adobe Creative Cloud", amount:109.99, billingCycle:"Monthly", category:"Business", analyticsOnly:false, claimablePercent:100, lifecycleState:"Active", currentCycle:{ dueDate:"2026-04-18", status:"Upcoming" }, payments:[] },
+  { id:3, name:"Microsoft 365", amount:22.00, billingCycle:"Monthly", category:"Business", analyticsOnly:false, claimablePercent:100, lifecycleState:"Active", currentCycle:{ dueDate:"2026-04-24", status:"Upcoming" }, payments:[] },
+  { id:4, name:"iCloud+", amount:4.99, billingCycle:"Monthly", category:"Personal", analyticsOnly:true, claimablePercent:0, lifecycleState:"Active", currentCycle:{ dueDate:"2026-04-10", status:"Overdue" }, payments:[] },
+  { id:5, name:"Canva Pro", amount:19.99, billingCycle:"Monthly", category:"Business", analyticsOnly:false, claimablePercent:100, lifecycleState:"Active", currentCycle:{ dueDate:"2026-05-12", status:"Upcoming" }, payments:[ { id:1, paidDate:"2026-04-12", cycleDueDate:"2026-04-12", amount:19.99, note:"Paid manually", claimablePercentSnapshot:100 } ] }
+];
+
+let subscriptions = loadData();
+recalculateStatuses();
+let editingId = null;
+let selectedSubscriptionId = null;
+let analyticsMode = "month";
+
+const subscriptionList = document.getElementById("subscriptionList");
+const searchInput = document.getElementById("searchInput");
+const sortSelect = document.getElementById("sortSelect");
+const statusFilter = document.getElementById("statusFilter");
+const categoryFilter = document.getElementById("categoryFilter");
+const cycleFilter = document.getElementById("cycleFilter");
+const claimableFilter = document.getElementById("claimableFilter");
+const stateFilter = document.getElementById("stateFilter");
+const historyFilter = document.getElementById("historyFilter");
+const modalWrap = document.getElementById("modalWrap");
+const bannerArea = document.getElementById("bannerArea");
+
+/* ---------- data ---------- */
+function loadData(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw === null && !localStorage.getItem(SEED_KEY)){ localStorage.setItem(SEED_KEY,"1"); return defaultData.map(normaliseSubscription); }
+    const data = raw ? JSON.parse(raw) : [];
+    return Array.isArray(data) ? data.map(normaliseSubscription) : [];
+  } catch(e){ return []; }
+}
+function normaliseSubscription(item){
+  return { analyticsOnly:false, claimablePercent:0, lifecycleState:"Active", payments:[], ...item,
+    currentCycle: item.currentCycle || { dueDate:item.dueDate || todayString(), status:"Upcoming" },
+    payments: item.payments || [] };
+}
+function saveData(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(subscriptions)); localStorage.setItem(SEED_KEY,"1"); if(typeof syncPush==="function") syncPush(); }
+
+/* ---------- dates ---------- */
+function nzDateParts(){
+  const parts = new Intl.DateTimeFormat("en-NZ",{ timeZone:"Pacific/Auckland", year:"numeric", month:"2-digit", day:"2-digit" }).formatToParts(new Date());
+  const get = t => parts.find(p=>p.type===t)?.value || "";
+  return { year:Number(get("year")), month:Number(get("month")), day:Number(get("day")) };
+}
+function today(){ const d=nzDateParts(); return new Date(d.year, d.month-1, d.day); }
+function todayString(){ const d=nzDateParts(); return `${d.year}-${String(d.month).padStart(2,"0")}-${String(d.day).padStart(2,"0")}`; }
+function currency(v){ return new Intl.NumberFormat("en-NZ",{ style:"currency", currency:"NZD", minimumFractionDigits:2, maximumFractionDigits:2 }).format(Number(v||0)); }
+function currency0(v){ return new Intl.NumberFormat("en-NZ",{ style:"currency", currency:"NZD", minimumFractionDigits:0, maximumFractionDigits:0 }).format(Number(v||0)); }
+function formatDate(v){ return new Date(v+"T00:00:00").toLocaleDateString("en-NZ",{ day:"numeric", month:"short", year:"numeric" }); }
+function daysUntil(dateStr){ return Math.round((new Date(dateStr+"T00:00:00") - today())/86400000); }
+function relativeDue(dateStr){
+  const d = daysUntil(dateStr);
+  if(d < 0) return { text:`Overdue by ${Math.abs(d)} day${Math.abs(d)===1?"":"s"}`, urgency:"overdue" };
+  if(d === 0) return { text:"Due today", urgency:"due" };
+  if(d === 1) return { text:"Due tomorrow", urgency:"soon" };
+  if(d <= 7) return { text:`Due in ${d} days`, urgency:"soon" };
+  return { text:`Due in ${d} days`, urgency:"later" };
+}
+function addCycle(dateString, cycle){
+  const [year, month, day] = dateString.split("-").map(Number);
+  if (cycle === "Weekly"){
+    const w = new Date(dateString + "T00:00:00"); w.setDate(w.getDate()+7);
+    return `${w.getFullYear()}-${String(w.getMonth()+1).padStart(2,"0")}-${String(w.getDate()).padStart(2,"0")}`;
+  }
+  if (cycle === "Monthly"){
+    const targetMonthIndex = month;
+    const targetYear = targetMonthIndex > 11 ? year + Math.floor(targetMonthIndex/12) : year;
+    const normalizedMonth = (targetMonthIndex % 12) + 1;
+    const lastDay = new Date(targetYear, normalizedMonth, 0).getDate();
+    return `${targetYear}-${String(normalizedMonth).padStart(2,"0")}-${String(Math.min(day,lastDay)).padStart(2,"0")}`;
+  }
+  if (cycle === "Yearly"){
+    const targetYear = year + 1;
+    const lastDay = new Date(targetYear, month, 0).getDate();
+    return `${targetYear}-${String(month).padStart(2,"0")}-${String(Math.min(day,lastDay)).padStart(2,"0")}`;
+  }
+  return dateString;
+}
+function monthlyEquivalent(item){ const a=Number(item.amount||0); if(item.billingCycle==="Weekly")return a*52/12; if(item.billingCycle==="Yearly")return a/12; return a; }
+function yearlyEquivalent(item){ const a=Number(item.amount||0); if(item.billingCycle==="Monthly")return a*12; if(item.billingCycle==="Weekly")return a*52; return a; }
+function cycleStatus(item){
+  if(item.lifecycleState==="Paused")return "Paused";
+  if(item.lifecycleState==="Cancelled")return "Cancelled";
+  if(item.lifecycleState==="Archived")return "Archived";
+  return item.currentCycle.status;
+}
+function recalculateStatuses(){
+  const todayValue = todayString();
+  subscriptions = subscriptions.map(s => {
+    if(s.lifecycleState!=="Active")return s;
+    const currentDue = s.currentCycle?.dueDate || todayValue;
+    const paidThisCycle = (s.payments||[]).some(p=>p.cycleDueDate===currentDue);
+    let status = "Upcoming";
+    if(paidThisCycle) status="Paid";
+    else if(currentDue < todayValue) status="Overdue";
+    else if(currentDue === todayValue) status="Due";
+    return { ...s, currentCycle:{ ...s.currentCycle, dueDate:currentDue, status } };
+  });
+}
+function nextCycleDue(item){ return addCycle(item.currentCycle.dueDate, item.billingCycle); }
+function isSameMonth(dateStr){ const d=new Date(dateStr+"T00:00:00"); const n=today(); return d.getFullYear()===n.getFullYear() && d.getMonth()===n.getMonth(); }
+function isSameYear(dateStr){ const d=new Date(dateStr+"T00:00:00"); return d.getFullYear()===today().getFullYear(); }
+function getPaidThisMonth(){ return subscriptions.flatMap(s=>s.payments||[]).filter(p=>isSameMonth(p.paidDate)).reduce((s,p)=>s+Number(p.amount||0),0); }
+function getPaidThisYear(){ return subscriptions.flatMap(s=>s.payments||[]).filter(p=>isSameYear(p.paidDate)).reduce((s,p)=>s+Number(p.amount||0),0); }
+function getExpectedThisMonth(){ return subscriptions.filter(s=>s.lifecycleState==="Active"&&isSameMonth(s.currentCycle.dueDate)).reduce((s,x)=>s+Number(x.amount||0),0); }
+function getExpectedThisYear(){ return subscriptions.filter(s=>s.lifecycleState==="Active").reduce((s,x)=>s+yearlyEquivalent(x),0); }
+function getOverdueExposure(){ return subscriptions.filter(s=>cycleStatus(s)==="Overdue").reduce((s,x)=>s+Number(x.amount||0),0); }
+function getMonthlyRunRate(){ return subscriptions.filter(s=>s.lifecycleState==="Active").reduce((s,x)=>s+monthlyEquivalent(x),0); }
+function getYearlyRunRate(){ return subscriptions.filter(s=>s.lifecycleState==="Active").reduce((s,x)=>s+yearlyEquivalent(x),0); }
+function getCategoryTotals(){
+  return {
+    Business: subscriptions.filter(s=>s.category==="Business").reduce((a,s)=>a+Number(s.amount||0),0),
+    Personal: subscriptions.filter(s=>s.category==="Personal").reduce((a,s)=>a+Number(s.amount||0),0),
+    Home: subscriptions.filter(s=>s.category==="Home").reduce((a,s)=>a+Number(s.amount||0),0)
+  };
+}
+function getBusinessClaimableTotal(){ return subscriptions.filter(s=>s.category==="Business").reduce((a,s)=>a+Number(s.amount||0)*(Number(s.claimablePercent||0)/100),0); }
+function getClaimableSplit(){
+  const claimable = subscriptions.reduce((a,s)=>a+Number(s.amount||0)*(Number(s.claimablePercent||0)/100),0);
+  const total = subscriptions.reduce((a,s)=>a+Number(s.amount||0),0);
+  return { claimable, nonClaimable: total - claimable };
+}
+function getFilteredSubscriptions(){
+  const q = searchInput.value.trim().toLowerCase();
+  let list = subscriptions.filter(s => {
+    const status = cycleStatus(s);
+    return s.name.toLowerCase().includes(q)
+      && (statusFilter.value==="All" || status===statusFilter.value)
+      && (categoryFilter.value==="All" || s.category===categoryFilter.value)
+      && (cycleFilter.value==="All" || s.billingCycle===cycleFilter.value)
+      && (claimableFilter.value==="All" || (claimableFilter.value==="Claimable" ? Number(s.claimablePercent||0)>0 : Number(s.claimablePercent||0)===0))
+      && (stateFilter.value==="All" || (stateFilter.value==="Active" ? s.lifecycleState==="Active" : s.lifecycleState!=="Active"));
+  });
+  const sv = sortSelect.value;
+  list.sort((a,b)=>{
+    if(sv==="amount") return Number(b.amount)-Number(a.amount);
+    if(sv==="name") return a.name.localeCompare(b.name);
+    if(sv==="added") return b.id-a.id;
+    return a.currentCycle.dueDate.localeCompare(b.currentCycle.dueDate);
+  });
+  return list;
+}
+function updateClaimablePreview(){
+  const amount = Number(document.getElementById("amount").value||0);
+  const percent = Number(document.getElementById("claimablePercent").value||0);
+  document.getElementById("claimableAmount").value = currency(amount*(percent/100));
+}
+function markPaid(id){
+  let name = "";
+  subscriptions = subscriptions.map(s => {
+    if(s.id!==id || s.lifecycleState!=="Active") return s;
+    name = s.name;
+    const currentDue = s.currentCycle.dueDate;
+    const payment = { id:Date.now(), paidDate:todayString(), cycleDueDate:currentDue, amount:Number(s.amount||0), note:"Paid manually", claimablePercentSnapshot:Number(s.claimablePercent||0) };
+    return { ...s, currentCycle:{ dueDate:addCycle(currentDue,s.billingCycle), status:"Upcoming" }, payments:[payment, ...s.payments] };
+  });
+  recalculateStatuses(); saveData(); syncAll();
+  if(name) toast(`${name} marked as paid ✓`);
+}
+function removeSubscription(id){
+  subscriptions = subscriptions.filter(s=>s.id!==id);
+  recalculateStatuses(); saveData();
+  if(selectedSubscriptionId===id){ selectedSubscriptionId=null; showView("subscriptions"); }
+  syncAll(); toast("Subscription deleted");
+}
+function updateLifecycleState(id,newState){
+  subscriptions = subscriptions.map(s => s.id!==id ? s : { ...s, lifecycleState:newState });
+  recalculateStatuses(); saveData(); syncAll(); toast(`Marked as ${newState.toLowerCase()}`);
+}
+
+/* ---------- modal ---------- */
+function openAddModal(){
+  editingId=null;
+  document.getElementById("modalTitle").textContent="Add subscription";
+  document.getElementById("saveBtn").textContent="Save subscription";
+  document.getElementById("name").value="";
+  document.getElementById("amount").value="";
+  document.getElementById("dueDate").value=todayString();
+  document.getElementById("billingCycle").value="Monthly";
+  document.getElementById("category").value="Personal";
+  document.getElementById("state").value="Active";
+  document.getElementById("claimablePercent").value=0;
+  document.getElementById("analyticsOnly").checked=false;
+  document.getElementById("completedThisCycle").checked=false;
+  updateClaimablePreview(); openModal();
+}
+function openEditModal(id){
+  const s = subscriptions.find(x=>x.id===id); if(!s)return;
+  editingId=id;
+  document.getElementById("modalTitle").textContent="Edit subscription";
+  document.getElementById("saveBtn").textContent="Update subscription";
+  document.getElementById("name").value=s.name;
+  document.getElementById("amount").value=s.amount;
+  document.getElementById("dueDate").value=s.currentCycle.dueDate;
+  document.getElementById("billingCycle").value=s.billingCycle;
+  document.getElementById("category").value=s.category;
+  document.getElementById("state").value=s.lifecycleState;
+  document.getElementById("claimablePercent").value=Number(s.claimablePercent||0);
+  document.getElementById("analyticsOnly").checked=s.analyticsOnly;
+  document.getElementById("completedThisCycle").checked=false;
+  updateClaimablePreview(); openModal();
+}
+function openModal(){ modalWrap.classList.remove("hidden"); setTimeout(()=>document.getElementById("name").focus(),50); }
+function closeModal(){ modalWrap.classList.add("hidden"); }
+function saveSubscriptionFromModal(){
+  const name = document.getElementById("name").value.trim();
+  const amount = Number(document.getElementById("amount").value);
+  const dueDate = document.getElementById("dueDate").value;
+  const billingCycle = document.getElementById("billingCycle").value;
+  const category = document.getElementById("category").value;
+  const lifecycleState = document.getElementById("state").value;
+  const claimablePercent = Number(document.getElementById("claimablePercent").value||0);
+  const analyticsOnly = document.getElementById("analyticsOnly").checked;
+  const completedThisCycle = document.getElementById("completedThisCycle").checked;
+  if(!name || !amount || !dueDate){ alert("Please fill in the name, amount, and due date."); return; }
+
+  const makeEntryPayment = () => ({ id:Date.now(), paidDate:todayString(), cycleDueDate:dueDate, amount:Number(amount), note:"Marked paid on entry", claimablePercentSnapshot:claimablePercent });
+  const isEdit = editingId !== null;
+
+  if(isEdit){
+    subscriptions = subscriptions.map(s => {
+      if(s.id!==editingId)return s;
+      let payments = s.payments;
+      if(completedThisCycle && !payments.some(p=>p.cycleDueDate===dueDate)) payments = [makeEntryPayment(), ...payments];
+      return { ...s, name, amount, billingCycle, category, lifecycleState, claimablePercent, analyticsOnly, payments, currentCycle:{ ...s.currentCycle, dueDate } };
+    });
+  } else {
+    subscriptions.unshift({ id:Date.now(), name, amount, billingCycle, category, analyticsOnly, claimablePercent, lifecycleState,
+      currentCycle:{ dueDate, status:"Upcoming" }, payments: completedThisCycle ? [makeEntryPayment()] : [] });
+  }
+  recalculateStatuses(); saveData(); closeModal(); syncAll();
+  toast(isEdit ? "Subscription updated" : `${name} added`);
+}
+
+/* ---------- data safety ---------- */
+function exportData(){
+  const blob = new Blob([JSON.stringify(subscriptions,null,2)],{type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href=url; a.download=`ledgerly-backup-${todayString()}.json`; a.click();
+  URL.revokeObjectURL(url);
+  localStorage.setItem(BACKUP_KEY, Date.now().toString());
+  renderBanners(); toast("Backup downloaded ✓");
+}
+function importData(file){
+  const reader = new FileReader();
+  reader.onload = () => {
+    let parsed;
+    try { parsed = JSON.parse(reader.result); } catch(e){ alert("That file isn't valid JSON. Choose a Ledgerly backup file."); return; }
+    if(!Array.isArray(parsed)){ alert("That file doesn't look like a Ledgerly backup."); return; }
+    if(!confirm(`Import ${parsed.length} subscription(s)? This replaces everything currently in the app.`)) return;
+    subscriptions = parsed.map(normaliseSubscription);
+    recalculateStatuses(); saveData(); syncAll(); toast("Backup imported ✓");
+  };
+  reader.readAsText(file);
+}
+
+/* ---------- calendar reminders (.ics) ---------- */
+function icsEscape(t){ return String(t).replace(/([\\;,])/g,"\\$1").replace(/\n/g,"\\n"); }
+function icsStamp(){ return new Date().toISOString().replace(/[-:]/g,"").split(".")[0]+"Z"; }
+function rruleFor(cycle){ return cycle==="Weekly" ? "FREQ=WEEKLY" : cycle==="Yearly" ? "FREQ=YEARLY" : "FREQ=MONTHLY"; }
+function eventLines(s){
+  const d = s.currentCycle.dueDate.replace(/-/g,"");
+  return [
+    "BEGIN:VEVENT",
+    `UID:ledgerly-${s.id}-${d}@ledgerly.local`,
+    `DTSTAMP:${icsStamp()}`,
+    `DTSTART:${d}T090000`,
+    "DURATION:PT30M",
+    `RRULE:${rruleFor(s.billingCycle)}`,
+    `SUMMARY:${icsEscape(`${s.name} — ${currency(s.amount)} due`)}`,
+    `DESCRIPTION:${icsEscape(`${s.billingCycle} subscription payment. Tracked in Ledgerly.`)}`,
+    "BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${icsEscape(s.name+" due tomorrow")}`,"TRIGGER:-P1D","END:VALARM",
+    "BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${icsEscape(s.name+" due today")}`,"TRIGGER:PT0S","END:VALARM",
+    "END:VEVENT"
+  ];
+}
+function buildICS(subs){ return ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Ledgerly//EN","CALSCALE:GREGORIAN",...subs.flatMap(eventLines),"END:VCALENDAR"].join("\r\n"); }
+function downloadICS(subs, filename){
+  if(!subs.length){ alert("No active subscriptions to add."); return; }
+  const blob = new Blob([buildICS(subs)],{type:"text/calendar"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),2000);
+  toast("Opening Calendar — tap Add");
+}
+function remindOne(id){ const s=subscriptions.find(x=>x.id===id); if(s) downloadICS([s], `${s.name.replace(/[^a-z0-9]/gi,"-").toLowerCase()}-reminder.ics`); }
+function remindAll(){ downloadICS(subscriptions.filter(s=>s.lifecycleState==="Active"), "ledgerly-reminders.ics"); }
+
+/* ---------- in-app notifications ---------- */
+function updateReminderHelper(){
+  const helper=document.getElementById("reminderHelper"); const btn=document.getElementById("reminderBtn");
+  if(!("Notification" in window)){ helper.textContent="Notifications aren't supported on this device/browser."; btn.disabled=true; return; }
+  if(Notification.permission==="granted"){ btn.textContent="🔔 In-app alerts on"; btn.disabled=true; helper.textContent="When you open Ledgerly you'll be alerted of anything due or overdue. (For this on iPhone, add the app to your Home Screen.)"; }
+  else if(Notification.permission==="denied"){ helper.textContent="In-app alerts are blocked. Enable notifications for this site in your browser settings."; }
+  else { helper.textContent="A reminder of due / overdue subscriptions when you open the app."; }
+}
+function requestReminders(){ if(!("Notification" in window))return; Notification.requestPermission().then(()=>{ updateReminderHelper(); checkDueReminders(true); }); }
+function checkDueReminders(force){
+  if(!("Notification" in window) || Notification.permission!=="granted") return;
+  const todayValue = todayString();
+  if(!force && localStorage.getItem(REMINDER_KEY)===todayValue) return;
+  const flagged = subscriptions.filter(s=>s.lifecycleState==="Active" && !s.analyticsOnly && (cycleStatus(s)==="Due"||cycleStatus(s)==="Overdue"));
+  localStorage.setItem(REMINDER_KEY, todayValue);
+  if(!flagged.length)return;
+  const total = flagged.reduce((a,s)=>a+Number(s.amount||0),0);
+  const names = flagged.slice(0,3).map(s=>s.name).join(", ") + (flagged.length>3?`, +${flagged.length-3} more`:"");
+  try { new Notification("Ledgerly — payments due",{ body:`${flagged.length} due or overdue (${currency(total)}): ${names}`, icon:"icon.png", tag:"ledgerly-due" }); } catch(e){}
+}
+
+/* ---------- web push ---------- */
+function getUserId(){
+  let id = localStorage.getItem(USER_ID_KEY);
+  if(!id){ id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now())+Math.random().toString(36).slice(2); localStorage.setItem(USER_ID_KEY, id); }
+  return id;
+}
+function pushConfigured(){ return !!(PUSH_CONFIG.backendUrl && PUSH_CONFIG.vapidPublicKey); }
+function pushApi(path){ return PUSH_CONFIG.backendUrl.replace(/\/$/,"") + path; }
+function pushItems(){
+  return subscriptions.filter(s=>s.lifecycleState==="Active" && !s.analyticsOnly)
+    .map(s=>({ name:s.name, amount:Number(s.amount||0), dueDate:s.currentCycle.dueDate }));
+}
+function urlB64ToUint8Array(base64){
+  const padding = "=".repeat((4 - base64.length % 4) % 4);
+  const b64 = (base64 + padding).replace(/-/g,"+").replace(/_/g,"/");
+  const raw = atob(b64); const arr = new Uint8Array(raw.length);
+  for(let i=0;i<raw.length;i++) arr[i]=raw.charCodeAt(i);
+  return arr;
+}
+async function enablePush(){
+  if(!pushConfigured()){ alert("Push isn't set up yet. Follow push-backend/README.md, then paste your Worker URL and VAPID public key into PUSH_CONFIG at the top of the <script> in Ledgerly.html."); return; }
+  if(!("serviceWorker" in navigator) || !("PushManager" in window)){ alert("This device/browser doesn't support push. On iPhone you must Add to Home Screen first (iOS 16.4+)."); return; }
+  try {
+    const perm = await Notification.requestPermission();
+    if(perm!=="granted"){ updatePushHelper(); return; }
+    const reg = await navigator.serviceWorker.ready;
+    let sub = await reg.pushManager.getSubscription();
+    if(!sub){ sub = await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey: urlB64ToUint8Array(PUSH_CONFIG.vapidPublicKey) }); }
+    const res = await fetch(pushApi("/register"), {
+      method:"POST", headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ userId:getUserId(), subscription:sub, items:pushItems(), tz:"Pacific/Auckland" })
+    });
+    if(!res.ok) throw new Error("backend returned "+res.status);
+    localStorage.setItem(PUSH_ENABLED_KEY,"1");
+    updatePushHelper(); toast("Push notifications enabled ✓");
+  } catch(e){ console.error(e); alert("Couldn't enable push: "+e.message); }
+}
+async function syncPush(){
+  if(!pushConfigured() || localStorage.getItem(PUSH_ENABLED_KEY)!=="1") return;
+  try {
+    await fetch(pushApi("/sync"), { method:"POST", headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ userId:getUserId(), items:pushItems(), tz:"Pacific/Auckland" }) });
+  } catch(e){ /* offline — will resync on the next change */ }
+}
+function updatePushHelper(){
+  const helper=document.getElementById("pushHelper"), btn=document.getElementById("pushBtn");
+  if(!helper||!btn) return;
+  if(!pushConfigured()){ helper.innerHTML='Not set up yet. See <strong>push-backend/README.md</strong> to deploy the free backend (~15 min, one time), then paste your keys into the app.'; return; }
+  if(localStorage.getItem(PUSH_ENABLED_KEY)==="1" && ("Notification" in window) && Notification.permission==="granted"){
+    btn.textContent="🔔 Push enabled"; btn.disabled=true;
+    helper.textContent="You'll get a real notification when payments are due — even when Ledgerly is closed.";
+  } else {
+    helper.textContent="Get a real notification when a subscription is due, even when the app is closed. (iPhone: Add to Home Screen first.)";
+  }
+}
+
+/* ---------- banners ---------- */
+function renderBanners(){
+  bannerArea.innerHTML="";
+  if(localStorage.getItem("ledgerly-backup-dismissed")===todayString())return;
+  if(!subscriptions.length)return;
+  const last = Number(localStorage.getItem(BACKUP_KEY)||0);
+  const days = last ? Math.floor((Date.now()-last)/86400000) : Infinity;
+  if(days >= 14){
+    const msg = last ? `Last backup was ${days} day(s) ago.` : `You haven't backed up yet.`;
+    bannerArea.innerHTML = `<div class="banner warn">
+      <div class="banner-body"><strong>Back up your data.</strong> ${msg} Your subscriptions live only on this device — export a copy so you don't lose them.</div>
+      <div class="banner-actions"><button id="bannerBackupBtn">Back up</button><button class="banner-close" id="bannerDismissBtn" aria-label="Dismiss">×</button></div></div>`;
+    document.getElementById("bannerBackupBtn").addEventListener("click", exportData);
+    document.getElementById("bannerDismissBtn").addEventListener("click",()=>{ localStorage.setItem("ledgerly-backup-dismissed", todayString()); renderBanners(); });
+  }
+}
+
+/* ---------- toast ---------- */
+let toastTimer = null;
+function toast(msg){
+  let t = document.getElementById("toast");
+  if(!t){ t=document.createElement("div"); t.id="toast"; t.className="toast"; document.body.appendChild(t); }
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove("show"), 2200);
+}
+
+/* ---------- render ---------- */
+function set(id,val){ const el=document.getElementById(id); if(el)el.textContent=val; }
+function renderMetrics(){
+  set("permonth", currency0(getMonthlyRunRate()));
+  set("peryear", currency0(getYearlyRunRate()));
+  set("expectedMonth", currency(getExpectedThisMonth()));
+  set("paidMonth", currency(getPaidThisMonth()));
+  set("overdueExposure", currency(getOverdueExposure()));
+  set("varianceMonth", currency(getExpectedThisMonth()-getPaidThisMonth()));
+  set("quickDueCount", subscriptions.filter(s=>cycleStatus(s)==="Due"||cycleStatus(s)==="Overdue").length);
+  set("quickPaidCount", subscriptions.flatMap(s=>s.payments||[]).filter(p=>isSameMonth(p.paidDate)).length);
+  set("quickActiveCount", subscriptions.filter(s=>s.lifecycleState==="Active").length);
+  const ct = getCategoryTotals();
+  set("businessTotal", currency(ct.Business));
+  set("personalTotal", currency(ct.Personal));
+  set("homeTotal", currency(ct.Home));
+  set("businessClaimableTotal", currency(getBusinessClaimableTotal()));
+}
+function renderSubscriptions(){
+  if(!subscriptions.length){
+    subscriptionList.innerHTML = `<div class="card empty-onboard">
+      <div class="big">📒</div>
+      <h3 class="heading-font">Welcome to Ledgerly</h3>
+      <p>Track every subscription, see what's due, and keep a record of what you've paid. Add your first one to get started.</p>
+      <div class="inline-actions"><button id="onboardAddBtn">+ Add your first subscription</button></div></div>`;
+    document.getElementById("onboardAddBtn").addEventListener("click", openAddModal);
+    return;
+  }
+  const filtered = getFilteredSubscriptions();
+  if(!filtered.length){ subscriptionList.innerHTML='<div class="card empty">No subscriptions match your filters.</div>'; return; }
+  subscriptionList.innerHTML = filtered.map(s => {
+    const rel = s.lifecycleState==="Active" ? relativeDue(s.currentCycle.dueDate) : null;
+    return `<div class="card item">
+      <div class="swipe-bg"><span class="swipe-pill primary">Paid</span><span class="swipe-pill">Details</span></div>
+      <div class="item-content" data-id="${s.id}">
+        <div class="row">
+          <div>
+            <h3 class="name heading-font">${escapeHtml(s.name)}</h3>
+            <div class="meta">
+              <span class="amt-big">${currency(s.amount)}</span>
+              <span>${escapeHtml(s.billingCycle)}</span>
+              ${rel ? `<span class="rel ${rel.urgency}">${rel.text}</span>` : ""}
+            </div>
+            <div class="chips">
+              <span class="chip">${escapeHtml(s.category)}</span>
+              ${Number(s.claimablePercent||0)>0 ? `<span class="chip">${Number(s.claimablePercent)}% claimable</span>` : ""}
+              ${s.analyticsOnly ? '<span class="chip">Analytics only</span>' : ""}
+              <span class="chip">${escapeHtml(s.lifecycleState)}</span>
+            </div>
+          </div>
+          <span class="status ${cycleStatus(s).toLowerCase()}">${cycleStatus(s)}</span>
+        </div>
+        <div class="actions">
+          ${!s.analyticsOnly && s.lifecycleState==="Active" ? `<button class="btn-small" data-action="paid" data-id="${s.id}">Mark as paid</button>` : ""}
+          ${s.lifecycleState==="Active" ? `<button class="btn-secondary btn-small" data-action="remind" data-id="${s.id}">📅 Remind</button>` : ""}
+          <button class="btn-secondary btn-small" data-action="details" data-id="${s.id}">Details</button>
+          <button class="btn-secondary btn-small" data-action="edit" data-id="${s.id}">Edit</button>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+  enableSwipe();
+}
+function renderUpcoming(){
+  const items = subscriptions.filter(s=>s.lifecycleState==="Active")
+    .map(s=>({ s, d:daysUntil(s.currentCycle.dueDate) }))
+    .sort((a,b)=>a.d-b.d);
+  set("upcomingTotal", currency(items.filter(x=>x.d<=30).reduce((a,x)=>a+Number(x.s.amount||0),0)));
+  set("upcomingOverdue", currency(items.filter(x=>x.d<0).reduce((a,x)=>a+Number(x.s.amount||0),0)));
+  const groups = [
+    { title:"Overdue", test:d=>d<0 },
+    { title:"This week", test:d=>d>=0&&d<=7 },
+    { title:"Next 30 days", test:d=>d>7&&d<=30 },
+    { title:"Later", test:d=>d>30 },
+  ];
+  const c = document.getElementById("upcomingGroups");
+  if(!items.length){ c.innerHTML='<div class="card empty">No active subscriptions to show.</div>'; return; }
+  c.innerHTML = groups.map(g => {
+    const rows = items.filter(x=>g.test(x.d));
+    if(!rows.length) return "";
+    return `<div class="up-group"><div class="up-group-title">${g.title} · ${rows.length}</div>` +
+      rows.map(({s})=>{
+        const rel = relativeDue(s.currentCycle.dueDate);
+        return `<div class="card up-item" data-id="${s.id}">
+          <div><div class="up-name heading-font">${escapeHtml(s.name)}</div>
+          <div class="up-when ${rel.urgency}">${rel.text} · ${formatDate(s.currentCycle.dueDate)}</div></div>
+          <div class="up-amt">${currency(s.amount)}</div></div>`;
+      }).join("") + `</div>`;
+  }).join("");
+  c.querySelectorAll(".up-item").forEach(el=>el.addEventListener("click",()=>{ selectedSubscriptionId=Number(el.dataset.id); showView("detail"); }));
+}
+function populateHistoryFilter(){
+  const current = historyFilter.value;
+  historyFilter.innerHTML = '<option value="All">All subscriptions</option>' +
+    [...subscriptions].sort((a,b)=>a.name.localeCompare(b.name)).map(s=>`<option value="${s.id}">${escapeHtml(s.name)}</option>`).join("");
+  if([...historyFilter.options].some(o=>o.value===current)) historyFilter.value=current;
+}
+function renderHistory(){
+  populateHistoryFilter();
+  const fv = historyFilter.value;
+  let rows = [];
+  subscriptions.forEach(s => s.payments.forEach(p => {
+    if(fv==="All" || Number(fv)===s.id) rows.push({ subscription:s.name, ...p });
+  }));
+  rows.sort((a,b)=>b.paidDate.localeCompare(a.paidDate));
+  const target = document.getElementById("historyList");
+  if(!rows.length){ target.innerHTML='<div class="empty">No payment history yet. Mark a subscription as paid to start recording events.</div>'; return; }
+  target.innerHTML = rows.map(r => `<div class="history-item">
+    <div><div style="font-weight:700;">${escapeHtml(r.subscription)}</div>
+    <div class="muted" style="margin-top:3px;">${escapeHtml(r.note)} - cycle due ${formatDate(r.cycleDueDate)}</div>
+    <div class="muted" style="margin-top:3px;">${r.claimablePercentSnapshot}% claimable snapshot</div></div>
+    <div style="text-align:right;"><div style="font-weight:700;">${currency(r.amount)}</div>
+    <div class="muted" style="margin-top:3px;">Paid ${formatDate(r.paidDate)}</div></div></div>`).join("");
+}
+function renderDetail(){
+  const s = subscriptions.find(x=>x.id===selectedSubscriptionId); if(!s)return;
+  document.getElementById("detailName").textContent=s.name;
+  const statusEl=document.getElementById("detailStatus");
+  statusEl.className="status "+cycleStatus(s).toLowerCase(); statusEl.textContent=cycleStatus(s);
+  document.getElementById("detailChips").innerHTML = `
+    <span class="chip">${escapeHtml(s.category)}</span><span class="chip">${escapeHtml(s.billingCycle)}</span>
+    <span class="chip">${s.claimablePercent}% claimable</span><span class="chip">${escapeHtml(s.lifecycleState)}</span>
+    ${s.analyticsOnly ? '<span class="chip">Analytics only</span>' : ''}`;
+  document.getElementById("detailSettings").innerHTML = `
+    <div class="keyval"><span class="muted">Amount</span><strong style="font-size:16px;">${currency(s.amount)}</strong></div>
+    <div class="keyval"><span class="muted">Per month (normalised)</span><strong>${currency(monthlyEquivalent(s))}</strong></div>
+    <div class="keyval"><span class="muted">Per year (normalised)</span><strong>${currency(yearlyEquivalent(s))}</strong></div>
+    <div class="keyval"><span class="muted">Category</span><strong>${escapeHtml(s.category)}</strong></div>
+    <div class="keyval"><span class="muted">Claimable</span><strong>${s.claimablePercent}%</strong></div>`;
+  document.getElementById("detailCycle").innerHTML = `
+    <div class="keyval"><span class="muted">Current cycle due</span><strong>${formatDate(s.currentCycle.dueDate)}</strong></div>
+    <div class="keyval"><span class="muted">Status</span><strong>${cycleStatus(s)}</strong></div>
+    <div class="keyval"><span class="muted">Next cycle due</span><strong>${formatDate(nextCycleDue(s))}</strong></div>
+    <div class="keyval"><span class="muted">Last paid</span><strong>${s.payments[0] ? formatDate(s.payments[0].paidDate) : "Not yet"}</strong></div>`;
+  const dh=document.getElementById("detailHistory");
+  dh.innerHTML = !s.payments.length ? '<div class="empty">No payments recorded yet.</div>' :
+    s.payments.map(p=>`<div class="history-item">
+      <div><div style="font-weight:700;">${currency(p.amount)}</div><div class="muted" style="margin-top:3px;">Cycle due ${formatDate(p.cycleDueDate)}</div></div>
+      <div style="text-align:right;"><div style="font-weight:700;">${formatDate(p.paidDate)}</div><div class="muted" style="margin-top:3px;">${p.claimablePercentSnapshot}% claimable</div></div></div>`).join("");
+  document.getElementById("detailMarkPaidBtn").disabled = s.lifecycleState!=="Active" || s.analyticsOnly;
+}
+function showView(name){
+  ["subscriptions","upcoming","analytics","history","detail"].forEach(v=>document.getElementById(v+"View").classList.add("hidden"));
+  document.getElementById(name+"View").classList.remove("hidden");
+  document.querySelectorAll(".nav-item").forEach(t=>t.classList.remove("active"));
+  if(name!=="detail"){ const at=document.querySelector(`.nav-item[data-tab="${name}"]`); if(at)at.classList.add("active"); }
+  window.scrollTo(0,0);
+  syncAll();
+}
+function escapeHtml(str){ return String(str).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;"); }
+
+/* ---------- charts ---------- */
+function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+function clearCanvas(canvas){
+  const ctx=canvas.getContext("2d"); const ratio=window.devicePixelRatio||1; const rect=canvas.getBoundingClientRect();
+  canvas.width=rect.width*ratio; canvas.height=rect.height*ratio; ctx.setTransform(ratio,0,0,ratio,0,0); ctx.clearRect(0,0,rect.width,rect.height);
+  return { ctx, width:rect.width, height:rect.height };
+}
+function roundRect(ctx,x,y,w,h,r,fill,stroke){
+  if(w<0)w=0; if(h<0)h=0;
+  ctx.beginPath(); ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath(); if(fill)ctx.fill(); if(stroke)ctx.stroke();
+}
+function shortenLabel(t,m){ return t.length>m ? t.slice(0,m-1)+"…" : t; }
+function drawBarChart(canvasId,data,colour){
+  colour = colour || cssVar("--primary") || "#c1a7e2";
+  const textColor=cssVar("--text")||"#000", mutedColor=cssVar("--muted")||"rgba(0,0,0,.55)";
+  const { ctx,width,height }=clearCanvas(document.getElementById(canvasId));
+  const padding={top:22,right:10,bottom:42,left:10};
+  const innerW=width-padding.left-padding.right, innerH=height-padding.top-padding.bottom;
+  const max=Math.max(...data.map(d=>d.value),1); const gap=12;
+  const barW=Math.max(24,(innerW-gap*(data.length-1))/Math.max(data.length,1));
+  data.forEach((d,i)=>{
+    const x=padding.left+i*(barW+gap), h=(d.value/max)*(innerH-16), y=padding.top+innerH-h;
+    ctx.fillStyle=colour; roundRect(ctx,x,y,barW,h,10,true,false);
+    ctx.fillStyle=textColor; ctx.font="700 11px Montserrat, sans-serif"; ctx.textAlign="center";
+    ctx.fillText(shortenLabel(d.valueLabel||currency(d.value),14), x+barW/2, y-6);
+    ctx.fillStyle=mutedColor; ctx.font="12px Montserrat, sans-serif";
+    ctx.fillText(shortenLabel(d.label,10), x+barW/2, padding.top+innerH+18);
+  });
+}
+function drawDonutChart(canvasId,data){
+  const { ctx,width,height }=clearCanvas(document.getElementById(canvasId));
+  const textColor=cssVar("--text")||"#000", mutedColor=cssVar("--muted")||"rgba(0,0,0,.55)", cardColor=cssVar("--card")||"#fff";
+  const total=data.reduce((a,b)=>a+b.value,0)||1;
+  const colors=["#c1a7e2","#dac9ef","#b292da","#8f6fc0","#a3a3a3"];
+  const cx=width*.34, cy=height*.5, radius=Math.min(width,height)*.22, inner=radius*.58;
+  let start=-Math.PI/2;
+  data.forEach((d,i)=>{ const a=(d.value/total)*Math.PI*2; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,radius,start,start+a); ctx.closePath(); ctx.fillStyle=colors[i%colors.length]; ctx.fill(); start+=a; });
+  ctx.beginPath(); ctx.arc(cx,cy,inner,0,Math.PI*2); ctx.fillStyle=cardColor; ctx.fill();
+  ctx.fillStyle=textColor; ctx.textAlign="center"; ctx.font="700 18px Montserrat, sans-serif"; ctx.fillText(currency0(total),cx,cy+4);
+  const legendX=width*.58; let y=32;
+  data.forEach((d,i)=>{
+    ctx.fillStyle=colors[i%colors.length]; roundRect(ctx,legendX,y,14,14,4,true,false);
+    ctx.fillStyle=textColor; ctx.font="600 12px Montserrat, sans-serif"; ctx.textAlign="left"; ctx.fillText(d.label, legendX+22, y+11);
+    ctx.fillStyle=mutedColor; ctx.fillText(d.valueLabel||currency(d.value), legendX+22, y+28); y+=46;
+  });
+}
+function renderCharts(){
+  const summaryData = analyticsMode==="month"
+    ? [ {label:"Expected",value:getExpectedThisMonth(),valueLabel:currency(getExpectedThisMonth())},{label:"Paid",value:getPaidThisMonth(),valueLabel:currency(getPaidThisMonth())},{label:"Overdue",value:getOverdueExposure(),valueLabel:currency(getOverdueExposure())} ]
+    : [ {label:"Expected",value:getExpectedThisYear(),valueLabel:currency(getExpectedThisYear())},{label:"Paid",value:getPaidThisYear(),valueLabel:currency(getPaidThisYear())},{label:"Overdue",value:getOverdueExposure(),valueLabel:currency(getOverdueExposure())} ];
+  drawBarChart("summaryChart", summaryData);
+  const ct=getCategoryTotals();
+  drawDonutChart("categoryChart", [ {label:"Business",value:ct.Business,valueLabel:currency(ct.Business)},{label:"Personal",value:ct.Personal,valueLabel:currency(ct.Personal)},{label:"Home",value:ct.Home,valueLabel:currency(ct.Home)} ]);
+  const split=getClaimableSplit();
+  drawDonutChart("claimableChart", [ {label:"Claimable",value:split.claimable,valueLabel:currency(split.claimable)},{label:"Non-claimable",value:split.nonClaimable,valueLabel:currency(split.nonClaimable)} ]);
+}
+function enableSwipe(){
+  document.querySelectorAll(".item-content").forEach(card=>{
+    let startX=0,currentX=0; const id=Number(card.dataset.id);
+    card.addEventListener("touchstart",e=>{ startX=e.touches[0].clientX; card.style.transition="none"; },{passive:true});
+    card.addEventListener("touchmove",e=>{ currentX=e.touches[0].clientX-startX; if(currentX>90)currentX=90; if(currentX<-110)currentX=-110; card.style.transform=`translateX(${currentX}px)`; },{passive:true});
+    card.addEventListener("touchend",()=>{ card.style.transition="transform .18s ease"; if(currentX>70)markPaid(id); else if(currentX<-85){ selectedSubscriptionId=id; showView("detail"); } card.style.transform="translateX(0px)"; currentX=0; });
+  });
+}
+function isVisible(id){ return !document.getElementById(id).classList.contains("hidden"); }
+function syncAll(){
+  recalculateStatuses();
+  renderMetrics(); renderSubscriptions(); renderUpcoming(); renderHistory(); renderBanners();
+  if(isVisible("analyticsView")) renderCharts();
+  if(isVisible("detailView") && selectedSubscriptionId!==null) renderDetail();
+}
+function render(){ syncAll(); }
+
+/* ---------- theme ---------- */
+function applyTheme(theme){
+  document.documentElement.setAttribute("data-theme", theme);
+  document.getElementById("themeToggle").textContent = theme==="dark" ? "☀️" : "🌙";
+  if(isVisible("analyticsView")) renderCharts();
+}
+function initTheme(){
+  const saved = localStorage.getItem(THEME_KEY);
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  applyTheme(saved || (prefersDark ? "dark" : "light"));
+}
+function toggleTheme(){ const next = document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark"; localStorage.setItem(THEME_KEY,next); applyTheme(next); }
+
+/* ---------- events ---------- */
+document.getElementById("amount").addEventListener("input", updateClaimablePreview);
+document.getElementById("claimablePercent").addEventListener("input", updateClaimablePreview);
+document.getElementById("saveBtn").addEventListener("click", saveSubscriptionFromModal);
+document.getElementById("cancelModalBtn").addEventListener("click", closeModal);
+document.getElementById("addBtn").addEventListener("click", openAddModal);
+document.getElementById("themeToggle").addEventListener("click", toggleTheme);
+modalWrap.addEventListener("click", e=>{ if(e.target===modalWrap) closeModal(); });
+document.addEventListener("keydown", e=>{ if(e.key==="Escape" && !modalWrap.classList.contains("hidden")) closeModal(); });
+
+document.getElementById("clearFiltersBtn").addEventListener("click",()=>{
+  searchInput.value=""; statusFilter.value="All"; categoryFilter.value="All"; cycleFilter.value="All"; claimableFilter.value="All"; stateFilter.value="All"; render();
+});
+[searchInput,sortSelect,statusFilter,categoryFilter,cycleFilter,claimableFilter,stateFilter].forEach(el=>el.addEventListener("input",render));
+[sortSelect,statusFilter,categoryFilter,cycleFilter,claimableFilter,stateFilter].forEach(el=>el.addEventListener("change",render));
+historyFilter.addEventListener("change", renderHistory);
+
+document.querySelectorAll(".nav-item").forEach(tab=>tab.addEventListener("click",()=>showView(tab.dataset.tab)));
+
+document.getElementById("analyticsMonthlyBtn").addEventListener("click",()=>{ analyticsMode="month"; document.getElementById("analyticsMonthlyBtn").classList.add("active"); document.getElementById("analyticsYearlyBtn").classList.remove("active"); renderCharts(); });
+document.getElementById("analyticsYearlyBtn").addEventListener("click",()=>{ analyticsMode="year"; document.getElementById("analyticsYearlyBtn").classList.add("active"); document.getElementById("analyticsMonthlyBtn").classList.remove("active"); renderCharts(); });
+
+subscriptionList.addEventListener("click", e=>{
+  const btn=e.target.closest("button[data-action]"); if(!btn)return;
+  const id=Number(btn.dataset.id), action=btn.dataset.action;
+  if(action==="paid") markPaid(id);
+  if(action==="remind") remindOne(id);
+  if(action==="edit") openEditModal(id);
+  if(action==="details"){ selectedSubscriptionId=id; showView("detail"); }
+});
+
+document.getElementById("backToListBtn").addEventListener("click",()=>showView("subscriptions"));
+document.getElementById("detailMarkPaidBtn").addEventListener("click",()=>{ if(selectedSubscriptionId!==null) markPaid(selectedSubscriptionId); });
+document.getElementById("detailEditBtn").addEventListener("click",()=>{ if(selectedSubscriptionId!==null) openEditModal(selectedSubscriptionId); });
+document.getElementById("pauseBtn").addEventListener("click",()=>selectedSubscriptionId!==null && updateLifecycleState(selectedSubscriptionId,"Paused"));
+document.getElementById("resumeBtn").addEventListener("click",()=>selectedSubscriptionId!==null && updateLifecycleState(selectedSubscriptionId,"Active"));
+document.getElementById("cancelBtnDetail").addEventListener("click",()=>selectedSubscriptionId!==null && updateLifecycleState(selectedSubscriptionId,"Cancelled"));
+document.getElementById("archiveBtn").addEventListener("click",()=>selectedSubscriptionId!==null && updateLifecycleState(selectedSubscriptionId,"Archived"));
+document.getElementById("deleteBtnDetail").addEventListener("click",()=>{ if(selectedSubscriptionId!==null && confirm("Delete this subscription and all payment history?")) removeSubscription(selectedSubscriptionId); });
+document.getElementById("detailRemindBtn").addEventListener("click",()=>{ if(selectedSubscriptionId!==null) remindOne(selectedSubscriptionId); });
+
+document.getElementById("exportBtn").addEventListener("click", exportData);
+document.getElementById("importBtn").addEventListener("click",()=>document.getElementById("importFile").click());
+document.getElementById("importFile").addEventListener("change", e=>{ if(e.target.files[0]){ importData(e.target.files[0]); e.target.value=""; } });
+document.getElementById("reminderBtn").addEventListener("click", requestReminders);
+document.getElementById("remindAllBtn").addEventListener("click", remindAll);
+document.getElementById("pushBtn").addEventListener("click", enablePush);
+window.addEventListener("resize",()=>{ if(isVisible("analyticsView")) renderCharts(); });
+
+if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
+
+initTheme();
+updateReminderHelper();
+updatePushHelper();
+render();
+checkDueReminders(false);
+</script>
+</body>
+</html>
