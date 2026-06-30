@@ -976,6 +976,7 @@ function renderSubscriptions(){
           ${s.lifecycleState==="Active" ? `<button class="btn-secondary btn-small" data-action="remind" data-id="${s.id}">📅 Remind</button>` : ""}
           <button class="btn-secondary btn-small" data-action="details" data-id="${s.id}">Details</button>
           <button class="btn-secondary btn-small" data-action="edit" data-id="${s.id}">Edit</button>
+          <button class="btn-danger btn-small" data-action="delete" data-id="${s.id}">Delete</button>
         </div>
       </div>
     </div>`;
@@ -1187,6 +1188,10 @@ subscriptionList.addEventListener("click", e=>{
   if(action==="remind") remindOne(id);
   if(action==="edit") openEditModal(id);
   if(action==="details"){ selectedSubscriptionId=id; showView("detail"); }
+  if(action==="delete"){
+    const s = subscriptions.find(x=>x.id===id);
+    if(s && confirm(`Delete "${s.name}" and all its payment history? This can't be undone.`)) removeSubscription(id);
+  }
 });
 
 document.getElementById("backToListBtn").addEventListener("click",()=>showView("subscriptions"));
