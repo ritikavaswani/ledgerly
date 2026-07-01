@@ -30,8 +30,8 @@
       --primary:#c1a7e2;
       --primary-dark:#af90d8;
       --primary-soft:#ece4f7;
-      --shadow:0 12px 32px rgba(85, 58, 125, .10);
-      --shadow-sm:0 6px 16px rgba(85,58,125,.08);
+      --shadow:0 4px 18px rgba(85, 58, 125, .06);
+      --shadow-sm:0 2px 8px rgba(85,58,125,.05);
       --input-bg:#ffffff;
       --chart-bg:#ffffff;
       --nav-bg:rgba(255,255,255,.92);
@@ -55,8 +55,8 @@
       --primary:#c1a7e2;
       --primary-dark:#a98fd2;
       --primary-soft:#352a4a;
-      --shadow:0 12px 32px rgba(0,0,0,.45);
-      --shadow-sm:0 6px 16px rgba(0,0,0,.35);
+      --shadow:0 4px 18px rgba(0,0,0,.30);
+      --shadow-sm:0 2px 8px rgba(0,0,0,.22);
       --input-bg:#2a2240;
       --chart-bg:#211a30;
       --nav-bg:rgba(28,21,42,.92);
@@ -77,23 +77,23 @@
     .app{max-width:470px;margin:0 auto;min-height:100vh;padding:env(safe-area-inset-top) 16px calc(104px + env(safe-area-inset-bottom));background:var(--bg)}
 
     .top{position:sticky;top:0;z-index:20;background:linear-gradient(180deg, color-mix(in srgb, var(--bg) 98%, transparent), color-mix(in srgb, var(--bg) 88%, transparent));backdrop-filter:blur(12px);padding:12px 0 12px}
-    .hero{display:flex;align-items:center;gap:12px;padding:14px 16px;margin-top:10px;background:var(--card);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow)}
-    .hero-mark{width:46px;height:46px;border-radius:14px;flex-shrink:0;object-fit:cover;background:var(--primary-soft);border:1px solid var(--border)}
-    .hero-copy{min-width:0;flex:1}
-    .hero-title{font-size:28px;line-height:1;margin:0 0 3px}
-    .hero-tagline{font-size:12.5px;line-height:1.35;color:var(--muted);font-weight:500}
-    .theme-toggle{flex-shrink:0;width:42px;height:42px;border-radius:13px;background:var(--primary-soft);color:var(--text);font-size:19px;line-height:0;border:1px solid var(--border);box-shadow:none}
+    .hero{display:flex;align-items:center;gap:10px;padding:6px 2px 2px}
+    .hero-mark{width:32px;height:32px;border-radius:9px;flex-shrink:0;object-fit:cover;background:var(--primary-soft)}
+    .hero-title{font-size:24px;line-height:1;margin:0;flex:1}
+    .theme-toggle{flex-shrink:0;width:36px;height:36px;border-radius:11px;background:transparent;color:var(--text);font-size:17px;line-height:0;border:1px solid var(--border);box-shadow:none}
     .theme-toggle:hover{filter:brightness(.96);background:var(--primary-soft)}
 
     .quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
     .quick-card{padding:10px 8px;text-align:center;background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-sm);font-size:11px;color:var(--muted)}
-    .quick-card strong{display:block;color:var(--text);font-size:18px;margin-bottom:2px;font-weight:800}
+    .quick-card strong{display:block;color:var(--text);font-size:18px;margin-bottom:2px;font-weight:600}
 
     .screen-heading{display:flex;justify-content:space-between;align-items:end;gap:10px;margin:18px 2px 12px}
-    .screen-heading h2{margin:0;font-size:21px;font-weight:800}
+    .screen-heading h2{margin:0;font-size:20px;font-weight:700;letter-spacing:-.01em}
     .screen-heading p{margin:0;font-size:12px;color:var(--muted)}
+    .section-label{font-size:12px;font-weight:600;color:var(--muted);margin:16px 2px 8px;text-transform:uppercase;letter-spacing:.06em}
+    #filterToggle.on{background:var(--primary);color:#1a1024;border-color:transparent}
 
-    .banner{display:flex;gap:10px;align-items:flex-start;margin-top:12px;padding:12px 14px;border-radius:18px;border:1px solid var(--border);box-shadow:var(--shadow);font-size:13px;line-height:1.4;background:var(--card)}
+    .banner{display:flex;gap:10px;align-items:center;margin-top:12px;padding:10px 12px;border-radius:14px;border:1px solid var(--border);box-shadow:var(--shadow-sm);font-size:12.5px;line-height:1.35;background:var(--card)}
     .banner.warn{background:var(--due-bg);color:var(--due-text);border-color:transparent}
     .banner .banner-body{flex:1}
     .banner .banner-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
@@ -101,50 +101,58 @@
     .banner-close{background:transparent;border:none;box-shadow:none;color:inherit;font-size:18px;line-height:1;padding:0 4px}
 
     /* Spend summary */
-    .spend-summary{display:flex;align-items:stretch;gap:0;margin-top:16px;padding:18px 16px}
-    .spend-summary .ss-col{flex:1;text-align:center}
-    .spend-summary .ss-div{width:1px;background:var(--border);margin:2px 6px}
+    .spend-summary{display:flex;align-items:stretch;gap:0;margin-top:16px;padding:16px}
+    .summary-strip{display:flex;align-items:center;gap:0;margin-top:12px;padding:12px 8px}
+    .summary-strip .ss-value{font-size:19px;margin-top:3px}
+    .summary-strip .ss-label{font-size:11px}
+    .ss-col{flex:1;text-align:center;min-width:0}
+    .ss-div{width:1px;background:var(--border);margin:2px 6px;flex-shrink:0}
     .ss-label{font-size:12px;color:var(--muted);font-weight:600}
-    .ss-value{font-size:30px;font-weight:800;letter-spacing:-.02em;margin-top:6px}
+    .ss-value{font-size:26px;font-weight:600;letter-spacing:-.02em;margin-top:6px}
     .ss-sub{font-size:11px;color:var(--muted2);margin-top:2px}
 
     .footer-rights{text-align:center;font-size:11px;color:var(--muted2);line-height:1.4;margin-top:22px;padding-bottom:8px}
     .tabs-note{display:none}
 
-    .card{background:var(--card);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow)}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow)}
     .metric-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px}
     .metric{padding:15px}
     .metric .label{font-size:12px;color:var(--muted)}
-    .metric .value{font-size:23px;font-weight:700;letter-spacing:-.02em;margin-top:8px}
-    .toolbar{display:block;padding:12px;margin:14px 0 12px}
+    .metric .value{font-size:21px;font-weight:600;letter-spacing:-.02em;margin-top:8px}
+    .toolbar{display:block;margin:12px 0 4px}
     input,select,button,textarea{font:inherit}
-    input,select,textarea{width:100%;padding:12px 14px;border-radius:16px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);outline:none}
+    input,select,textarea{width:100%;padding:11px 14px;border-radius:12px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);outline:none}
     input::placeholder{color:var(--muted2)}
     input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--primary-dark);outline-offset:2px}
-    button{border:none;background:var(--primary);color:#1a1024;padding:12px 14px;border-radius:16px;font-weight:700;cursor:pointer}
+    button{border:none;background:var(--primary);color:#1a1024;padding:11px 14px;border-radius:14px;font-weight:600;cursor:pointer}
     button:hover{background:var(--primary-dark)}
     .btn-secondary{background:var(--card);border:1px solid var(--border);color:var(--text)}
     .btn-secondary:hover{background:var(--primary-soft)}
     .btn-danger{background:var(--overdue-bg);color:var(--overdue-text)}
     .btn-danger:hover{filter:brightness(.95)}
-    .btn-small{padding:10px 12px;font-size:13px;border-radius:14px}
+    .btn-small{padding:8px 12px;font-size:12.5px;border-radius:11px}
     .filter-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
-    .list{display:flex;flex-direction:column;gap:12px}
+    .list{display:flex;flex-direction:column;gap:10px}
     .item{position:relative;overflow:hidden}
     .swipe-bg{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center;padding:0 14px;pointer-events:none}
     .swipe-pill{padding:10px 12px;border-radius:999px;background:var(--card);border:1px solid var(--border);font-size:12px;font-weight:700;color:var(--text)}
     .swipe-pill.primary{background:var(--primary);border-color:transparent;color:#1a1024}
-    .item-content{position:relative;background:var(--card);padding:15px;border-radius:22px;transition:transform .18s ease;touch-action:pan-y}
+    .item-content{position:relative;background:var(--card);padding:14px;border-radius:18px;transition:transform .18s ease;touch-action:pan-y;cursor:pointer}
+    .item-mid{min-width:0;flex:1}
+    .item-right{display:flex;flex-direction:column;align-items:flex-end;gap:9px;flex-shrink:0}
+    .pay-btn{padding:7px 13px;font-size:12px;font-weight:600;border-radius:10px;background:var(--primary);color:#1a1024;white-space:nowrap}
+    .pay-btn:hover{background:var(--primary-dark)}
     .row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
     .name{font-size:18px;line-height:1.2;margin:0}
     .meta{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:9px;color:var(--muted);font-size:13px;align-items:center}
-    .amt-big{font-weight:800;font-size:15px;color:var(--text)}
+    .amt-big{font-weight:700;font-size:15px;color:var(--text)}
     .rel{font-weight:700}
+    .rel{background:transparent!important;padding:0}
     .rel.overdue{color:var(--overdue-text)} .rel.due{color:var(--due-text)} .rel.soon{color:var(--soon-text)} .rel.later{color:var(--muted)}
     .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-    .chip{padding:5px 9px;border-radius:999px;background:var(--primary-soft);font-size:11px;font-weight:600;color:var(--text)}
-    .status{display:inline-flex;align-items:center;padding:6px 11px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+    .chip{padding:3px 9px;border-radius:999px;background:transparent;border:1px solid var(--border);font-size:11px;font-weight:500;color:var(--muted)}
+    .status{display:inline-flex;align-items:center;padding:5px 10px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap;letter-spacing:.01em}
     .paid{background:var(--paid-bg);color:var(--paid-text)}
     .due{background:var(--due-bg);color:var(--due-text)}
     .overdue{background:var(--overdue-bg);color:var(--overdue-text)}
@@ -158,12 +166,13 @@
     .up-summary{display:flex;gap:0;padding:16px;margin-top:4px}
     .up-summary .ss-col{flex:1;text-align:center}
     .up-group{margin-top:18px}
-    .up-group-title{font-size:13px;font-weight:800;color:var(--muted);margin:0 2px 10px;text-transform:uppercase;letter-spacing:.05em}
+    .up-group-title{font-size:11.5px;font-weight:600;color:var(--muted2);margin:0 2px 10px;text-transform:uppercase;letter-spacing:.08em}
     .up-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 15px;margin-bottom:10px;cursor:pointer}
     .up-name{font-size:16px;margin:0 0 3px}
     .up-when{font-size:12.5px;font-weight:600}
+    .up-when{background:transparent!important;padding:0}
     .up-when.overdue{color:var(--overdue-text)} .up-when.due{color:var(--due-text)} .up-when.soon{color:var(--soon-text)} .up-when.later{color:var(--muted)}
-    .up-amt{font-weight:800;font-size:16px;white-space:nowrap}
+    .up-amt{font-weight:600;font-size:15px;white-space:nowrap}
 
     .analytics-grid{display:grid;gap:12px;margin-top:16px}
     .chart-card{padding:14px}
@@ -220,6 +229,17 @@
       background:var(--text);color:var(--bg);padding:12px 18px;border-radius:14px;font-size:13px;font-weight:600;z-index:60;
       box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;max-width:88%;text-align:center}
     .toast.show{opacity:.97;transform:translateX(-50%) translateY(0)}
+
+    /* Company logos */
+    .logo{position:relative;width:42px;height:42px;border-radius:12px;flex-shrink:0;overflow:hidden;
+      background:var(--lg,#c1a7e2);display:flex;align-items:center;justify-content:center;border:1px solid var(--border)}
+    .logo-mono{font-family:"Big Caslon","Libre Baskerville",Georgia,serif;font-size:19px;font-weight:700;color:#fff;line-height:1}
+    .logo-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#fff}
+    .logo.lg{width:54px;height:54px;border-radius:15px}
+    .logo.lg .logo-mono{font-size:24px}
+    .logo.sm{width:36px;height:36px;border-radius:10px}
+    .logo.sm .logo-mono{font-size:16px}
+    .name-wrap{display:flex;gap:12px;min-width:0;align-items:flex-start}
   </style>
 </head>
 <body>
@@ -227,16 +247,8 @@
     <div class="top">
       <div class="hero">
         <img class="hero-mark" src="icon.png" alt="" onerror="this.style.visibility='hidden'">
-        <div class="hero-copy">
-          <h1 class="heading-font hero-title">Ledgerly</h1>
-          <div class="hero-tagline">Structure your subscriptions. Control your spend.</div>
-        </div>
+        <h1 class="heading-font hero-title">Ledgerly</h1>
         <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
-      </div>
-      <div class="quick-actions">
-        <div class="quick-card"><strong id="quickDueCount">0</strong>Due / overdue</div>
-        <div class="quick-card"><strong id="quickPaidCount">0</strong>Paid this month</div>
-        <div class="quick-card"><strong id="quickActiveCount">0</strong>Active subs</div>
       </div>
     </div>
 
@@ -244,24 +256,20 @@
 
     <!-- SUBSCRIPTIONS -->
     <section id="subscriptionsView">
-      <div class="spend-summary card">
-        <div class="ss-col"><div class="ss-label">Per month</div><div class="ss-value" id="permonth">$0</div><div class="ss-sub">all active</div></div>
+      <div class="summary-strip card">
+        <div class="ss-col"><div class="ss-label">Per month</div><div class="ss-value" id="permonth">$0</div></div>
         <div class="ss-div"></div>
-        <div class="ss-col"><div class="ss-label">Per year</div><div class="ss-value" id="peryear">$0</div><div class="ss-sub">projected</div></div>
+        <div class="ss-col"><div class="ss-label">Per year</div><div class="ss-value" id="peryear">$0</div></div>
+        <div class="ss-div"></div>
+        <div class="ss-col"><div class="ss-label">Due now</div><div class="ss-value" id="quickDueCount">0</div></div>
       </div>
 
-      <div class="metric-grid">
-        <div class="card metric"><div class="label">Expected this month</div><div class="value" id="expectedMonth">$0.00</div></div>
-        <div class="card metric"><div class="label">Paid this month</div><div class="value" id="paidMonth">$0.00</div></div>
-        <div class="card metric"><div class="label">Overdue exposure</div><div class="value" id="overdueExposure">$0.00</div></div>
-        <div class="card metric"><div class="label">Outstanding</div><div class="value" id="varianceMonth">$0.00</div></div>
-      </div>
-
-      <div class="card toolbar">
-        <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px;">
+      <div class="toolbar">
+        <div style="display:flex;gap:10px;align-items:center;">
           <input class="search" id="searchInput" placeholder="Search subscriptions" aria-label="Search subscriptions" style="flex:1" />
-          <button class="btn-secondary btn-small" id="clearFiltersBtn">Clear</button>
+          <button class="btn-secondary btn-small" id="filterToggle">Filter</button>
         </div>
+        <div id="filterPanel" class="hidden" style="margin-top:10px;">
         <div style="margin-bottom:10px;">
           <select id="sortSelect" aria-label="Sort subscriptions">
             <option value="due">Sort: Due date (soonest)</option>
@@ -285,6 +293,7 @@
             <option value="All">All categories</option>
             <option value="Business">Business</option>
             <option value="Personal">Personal</option>
+            <option value="Mixed">Mixed</option>
             <option value="Home">Home</option>
           </select>
           <select id="cycleFilter" aria-label="Filter by billing cycle">
@@ -303,6 +312,8 @@
             <option value="Active">Active only</option>
             <option value="Inactive">Paused / Cancelled / Archived</option>
           </select>
+        </div>
+        <div style="margin-top:10px;"><button class="btn-secondary btn-small" id="clearFiltersBtn">Clear filters</button></div>
         </div>
       </div>
 
@@ -325,8 +336,16 @@
     <section id="analyticsView" class="hidden">
       <div class="screen-heading"><div><h2>Analytics</h2><p>Visualise spend, claimable totals, and trends</p></div></div>
       <div class="metric-grid">
+        <div class="card metric"><div class="label">Expected this month</div><div class="value" id="expectedMonth">$0.00</div></div>
+        <div class="card metric"><div class="label">Paid this month</div><div class="value" id="paidMonth">$0.00</div></div>
+        <div class="card metric"><div class="label">Overdue exposure</div><div class="value" id="overdueExposure">$0.00</div></div>
+        <div class="card metric"><div class="label">Outstanding</div><div class="value" id="varianceMonth">$0.00</div></div>
+      </div>
+      <div class="section-label">By category</div>
+      <div class="metric-grid">
         <div class="card metric"><div class="label">Business</div><div class="value" id="businessTotal">$0.00</div></div>
         <div class="card metric"><div class="label">Personal</div><div class="value" id="personalTotal">$0.00</div></div>
+        <div class="card metric"><div class="label">Mixed</div><div class="value" id="mixedTotal">$0.00</div></div>
         <div class="card metric"><div class="label">Home</div><div class="value" id="homeTotal">$0.00</div></div>
         <div class="card metric"><div class="label">Business claimable</div><div class="value" id="businessClaimableTotal">$0.00</div></div>
       </div>
@@ -399,9 +418,12 @@
         <div class="detail-grid">
           <div class="card detail-card">
             <div class="row">
-              <div>
-                <h2 class="heading-font" id="detailName" style="margin:0 0 8px;font-size:28px;"></h2>
-                <div id="detailStatus" class="status"></div>
+              <div class="name-wrap" style="align-items:center;">
+                <span id="detailLogo"></span>
+                <div>
+                  <h2 class="heading-font" id="detailName" style="margin:0 0 8px;font-size:28px;"></h2>
+                  <div id="detailStatus" class="status"></div>
+                </div>
               </div>
               <div class="inline-actions">
                 <button class="btn-small" id="detailMarkPaidBtn">Mark as paid</button>
@@ -467,6 +489,11 @@
           <label for="name">Name</label>
           <input id="name" placeholder="e.g. Spotify" />
         </div>
+        <div>
+          <label for="website">Website <span class="muted">(optional — for the logo)</span></label>
+          <input id="website" placeholder="e.g. spotify.com" />
+          <div class="helper">Leave blank and we'll guess from the name. Used only to show the company icon.</div>
+        </div>
         <div class="row-2">
           <div><label for="amount">Amount</label><input id="amount" type="number" step="0.01" inputmode="decimal" placeholder="0.00" /></div>
           <div><label for="dueDate">Current cycle due date</label><input id="dueDate" type="date" /></div>
@@ -478,7 +505,7 @@
           </div>
           <div>
             <label for="category">Category</label>
-            <select id="category"><option>Business</option><option selected>Personal</option><option>Home</option></select>
+            <select id="category"><option>Business</option><option selected>Personal</option><option>Mixed</option><option>Home</option></select>
           </div>
         </div>
         <div class="row-2">
@@ -558,7 +585,7 @@ function loadData(){
   } catch(e){ return []; }
 }
 function normaliseSubscription(item){
-  return { analyticsOnly:false, claimablePercent:0, lifecycleState:"Active", payments:[], ...item,
+  return { analyticsOnly:false, claimablePercent:0, lifecycleState:"Active", payments:[], domain:"", ...item,
     currentCycle: item.currentCycle || { dueDate:item.dueDate || todayString(), status:"Upcoming" },
     payments: item.payments || [] };
 }
@@ -639,10 +666,12 @@ function getCategoryTotals(){
   return {
     Business: subscriptions.filter(s=>s.category==="Business").reduce((a,s)=>a+Number(s.amount||0),0),
     Personal: subscriptions.filter(s=>s.category==="Personal").reduce((a,s)=>a+Number(s.amount||0),0),
+    Mixed: subscriptions.filter(s=>s.category==="Mixed").reduce((a,s)=>a+Number(s.amount||0),0),
     Home: subscriptions.filter(s=>s.category==="Home").reduce((a,s)=>a+Number(s.amount||0),0)
   };
 }
-function getBusinessClaimableTotal(){ return subscriptions.filter(s=>s.category==="Business").reduce((a,s)=>a+Number(s.amount||0)*(Number(s.claimablePercent||0)/100),0); }
+// Claimable (deductible) amount — counts Business and the business portion of Mixed via claimable %.
+function getBusinessClaimableTotal(){ return subscriptions.filter(s=>s.category==="Business"||s.category==="Mixed").reduce((a,s)=>a+Number(s.amount||0)*(Number(s.claimablePercent||0)/100),0); }
 function getClaimableSplit(){
   const claimable = subscriptions.reduce((a,s)=>a+Number(s.amount||0)*(Number(s.claimablePercent||0)/100),0);
   const total = subscriptions.reduce((a,s)=>a+Number(s.amount||0),0);
@@ -702,6 +731,7 @@ function openAddModal(){
   document.getElementById("modalTitle").textContent="Add subscription";
   document.getElementById("saveBtn").textContent="Save subscription";
   document.getElementById("name").value="";
+  document.getElementById("website").value="";
   document.getElementById("amount").value="";
   document.getElementById("dueDate").value=todayString();
   document.getElementById("billingCycle").value="Monthly";
@@ -718,6 +748,7 @@ function openEditModal(id){
   document.getElementById("modalTitle").textContent="Edit subscription";
   document.getElementById("saveBtn").textContent="Update subscription";
   document.getElementById("name").value=s.name;
+  document.getElementById("website").value=s.domain||"";
   document.getElementById("amount").value=s.amount;
   document.getElementById("dueDate").value=s.currentCycle.dueDate;
   document.getElementById("billingCycle").value=s.billingCycle;
@@ -732,6 +763,7 @@ function openModal(){ modalWrap.classList.remove("hidden"); setTimeout(()=>docum
 function closeModal(){ modalWrap.classList.add("hidden"); }
 function saveSubscriptionFromModal(){
   const name = document.getElementById("name").value.trim();
+  const domain = document.getElementById("website").value.trim().replace(/^https?:\/\//,"").replace(/\/.*$/,"");
   const amount = Number(document.getElementById("amount").value);
   const dueDate = document.getElementById("dueDate").value;
   const billingCycle = document.getElementById("billingCycle").value;
@@ -750,10 +782,10 @@ function saveSubscriptionFromModal(){
       if(s.id!==editingId)return s;
       let payments = s.payments;
       if(completedThisCycle && !payments.some(p=>p.cycleDueDate===dueDate)) payments = [makeEntryPayment(), ...payments];
-      return { ...s, name, amount, billingCycle, category, lifecycleState, claimablePercent, analyticsOnly, payments, currentCycle:{ ...s.currentCycle, dueDate } };
+      return { ...s, name, domain, amount, billingCycle, category, lifecycleState, claimablePercent, analyticsOnly, payments, currentCycle:{ ...s.currentCycle, dueDate } };
     });
   } else {
-    subscriptions.unshift({ id:Date.now(), name, amount, billingCycle, category, analyticsOnly, claimablePercent, lifecycleState,
+    subscriptions.unshift({ id:Date.now(), name, domain, amount, billingCycle, category, analyticsOnly, claimablePercent, lifecycleState,
       currentCycle:{ dueDate, status:"Upcoming" }, payments: completedThisCycle ? [makeEntryPayment()] : [] });
   }
   recalculateStatuses(); saveData(); closeModal(); syncAll();
@@ -902,7 +934,7 @@ function renderBanners(){
   if(days >= 14){
     const msg = last ? `Last backup was ${days} day(s) ago.` : `You haven't backed up yet.`;
     bannerArea.innerHTML = `<div class="banner warn">
-      <div class="banner-body"><strong>Back up your data.</strong> ${msg} Your subscriptions live only on this device — export a copy so you don't lose them.</div>
+      <div class="banner-body"><strong>Back up your data.</strong> ${msg} It lives only on this device.</div>
       <div class="banner-actions"><button id="bannerBackupBtn">Back up</button><button class="banner-close" id="bannerDismissBtn" aria-label="Dismiss">×</button></div></div>`;
     document.getElementById("bannerBackupBtn").addEventListener("click", exportData);
     document.getElementById("bannerDismissBtn").addEventListener("click",()=>{ localStorage.setItem("ledgerly-backup-dismissed", todayString()); renderBanners(); });
@@ -934,6 +966,7 @@ function renderMetrics(){
   const ct = getCategoryTotals();
   set("businessTotal", currency(ct.Business));
   set("personalTotal", currency(ct.Personal));
+  set("mixedTotal", currency(ct.Mixed));
   set("homeTotal", currency(ct.Home));
   set("businessClaimableTotal", currency(getBusinessClaimableTotal()));
 }
@@ -954,8 +987,9 @@ function renderSubscriptions(){
     return `<div class="card item">
       <div class="swipe-bg"><span class="swipe-pill primary">Paid</span><span class="swipe-pill">Details</span></div>
       <div class="item-content" data-id="${s.id}">
-        <div class="row">
-          <div>
+        <div class="name-wrap">
+          ${logoHtml(s)}
+          <div class="item-mid">
             <h3 class="name heading-font">${escapeHtml(s.name)}</h3>
             <div class="meta">
               <span class="amt-big">${currency(s.amount)}</span>
@@ -966,17 +1000,12 @@ function renderSubscriptions(){
               <span class="chip">${escapeHtml(s.category)}</span>
               ${Number(s.claimablePercent||0)>0 ? `<span class="chip">${Number(s.claimablePercent)}% claimable</span>` : ""}
               ${s.analyticsOnly ? '<span class="chip">Analytics only</span>' : ""}
-              <span class="chip">${escapeHtml(s.lifecycleState)}</span>
             </div>
           </div>
-          <span class="status ${cycleStatus(s).toLowerCase()}">${cycleStatus(s)}</span>
-        </div>
-        <div class="actions">
-          ${!s.analyticsOnly && s.lifecycleState==="Active" ? `<button class="btn-small" data-action="paid" data-id="${s.id}">Mark as paid</button>` : ""}
-          ${s.lifecycleState==="Active" ? `<button class="btn-secondary btn-small" data-action="remind" data-id="${s.id}">📅 Remind</button>` : ""}
-          <button class="btn-secondary btn-small" data-action="details" data-id="${s.id}">Details</button>
-          <button class="btn-secondary btn-small" data-action="edit" data-id="${s.id}">Edit</button>
-          <button class="btn-danger btn-small" data-action="delete" data-id="${s.id}">Delete</button>
+          <div class="item-right">
+            <span class="status ${cycleStatus(s).toLowerCase()}">${cycleStatus(s)}</span>
+            ${!s.analyticsOnly && s.lifecycleState==="Active" ? `<button class="pay-btn" data-action="paid" data-id="${s.id}">Mark paid</button>` : ""}
+          </div>
         </div>
       </div>
     </div>`;
@@ -1004,8 +1033,9 @@ function renderUpcoming(){
       rows.map(({s})=>{
         const rel = relativeDue(s.currentCycle.dueDate);
         return `<div class="card up-item" data-id="${s.id}">
-          <div><div class="up-name heading-font">${escapeHtml(s.name)}</div>
-          <div class="up-when ${rel.urgency}">${rel.text} · ${formatDate(s.currentCycle.dueDate)}</div></div>
+          <div style="display:flex;gap:12px;align-items:center;min-width:0;">${logoHtml(s,"sm")}
+          <div style="min-width:0;"><div class="up-name heading-font">${escapeHtml(s.name)}</div>
+          <div class="up-when ${rel.urgency}">${rel.text} · ${formatDate(s.currentCycle.dueDate)}</div></div></div>
           <div class="up-amt">${currency(s.amount)}</div></div>`;
       }).join("") + `</div>`;
   }).join("");
@@ -1037,6 +1067,7 @@ function renderHistory(){
 function renderDetail(){
   const s = subscriptions.find(x=>x.id===selectedSubscriptionId); if(!s)return;
   document.getElementById("detailName").textContent=s.name;
+  document.getElementById("detailLogo").innerHTML = logoHtml(s,"lg");
   const statusEl=document.getElementById("detailStatus");
   statusEl.className="status "+cycleStatus(s).toLowerCase(); statusEl.textContent=cycleStatus(s);
   document.getElementById("detailChips").innerHTML = `
@@ -1070,6 +1101,29 @@ function showView(name){
   syncAll();
 }
 function escapeHtml(str){ return String(str).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;"); }
+
+/* ---------- company logos ---------- */
+const LOGO_PALETTE = ["#c1a7e2","#8f6fc0","#7c9bd6","#6fae9a","#d68fb0","#d6a86f","#9a8fd6","#6fc0b8"];
+function subDomain(s){
+  if(s.domain && s.domain.trim()) return s.domain.replace(/^https?:\/\//,"").replace(/\/.*$/,"").trim();
+  const cleaned = s.name.toLowerCase().replace(/[^a-z0-9 ]/g,"").trim();
+  const first = cleaned.split(/\s+/)[0];
+  return first ? first + ".com" : "";
+}
+function colorFor(name){
+  let h = 0; for(let i=0;i<name.length;i++) h = (h*31 + name.charCodeAt(i)) >>> 0;
+  return LOGO_PALETTE[h % LOGO_PALETTE.length];
+}
+// Renders a square logo: company favicon on top of a coloured monogram fallback.
+function logoHtml(s, size){
+  const domain = subDomain(s);
+  const initial = escapeHtml((s.name.trim()[0] || "?").toUpperCase());
+  const cls = size ? "logo " + size : "logo";
+  const img = domain
+    ? `<img class="logo-img" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128" alt="" loading="lazy" onerror="this.remove()">`
+    : "";
+  return `<div class="${cls}" style="--lg:${colorFor(s.name)}"><span class="logo-mono">${initial}</span>${img}</div>`;
+}
 
 /* ---------- charts ---------- */
 function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
@@ -1125,16 +1179,22 @@ function renderCharts(){
     : [ {label:"Expected",value:getExpectedThisYear(),valueLabel:currency(getExpectedThisYear())},{label:"Paid",value:getPaidThisYear(),valueLabel:currency(getPaidThisYear())},{label:"Overdue",value:getOverdueExposure(),valueLabel:currency(getOverdueExposure())} ];
   drawBarChart("summaryChart", summaryData);
   const ct=getCategoryTotals();
-  drawDonutChart("categoryChart", [ {label:"Business",value:ct.Business,valueLabel:currency(ct.Business)},{label:"Personal",value:ct.Personal,valueLabel:currency(ct.Personal)},{label:"Home",value:ct.Home,valueLabel:currency(ct.Home)} ]);
+  drawDonutChart("categoryChart", [ {label:"Business",value:ct.Business,valueLabel:currency(ct.Business)},{label:"Personal",value:ct.Personal,valueLabel:currency(ct.Personal)},{label:"Mixed",value:ct.Mixed,valueLabel:currency(ct.Mixed)},{label:"Home",value:ct.Home,valueLabel:currency(ct.Home)} ]);
   const split=getClaimableSplit();
   drawDonutChart("claimableChart", [ {label:"Claimable",value:split.claimable,valueLabel:currency(split.claimable)},{label:"Non-claimable",value:split.nonClaimable,valueLabel:currency(split.nonClaimable)} ]);
 }
+let suppressClickUntil = 0;
 function enableSwipe(){
   document.querySelectorAll(".item-content").forEach(card=>{
     let startX=0,currentX=0; const id=Number(card.dataset.id);
     card.addEventListener("touchstart",e=>{ startX=e.touches[0].clientX; card.style.transition="none"; },{passive:true});
     card.addEventListener("touchmove",e=>{ currentX=e.touches[0].clientX-startX; if(currentX>90)currentX=90; if(currentX<-110)currentX=-110; card.style.transform=`translateX(${currentX}px)`; },{passive:true});
-    card.addEventListener("touchend",()=>{ card.style.transition="transform .18s ease"; if(currentX>70)markPaid(id); else if(currentX<-85){ selectedSubscriptionId=id; showView("detail"); } card.style.transform="translateX(0px)"; currentX=0; });
+    card.addEventListener("touchend",()=>{
+      card.style.transition="transform .18s ease";
+      if(currentX>70){ suppressClickUntil=Date.now()+500; markPaid(id); }
+      else if(currentX<-85){ suppressClickUntil=Date.now()+500; selectedSubscriptionId=id; showView("detail"); }
+      card.style.transform="translateX(0px)"; currentX=0;
+    });
   });
 }
 function isVisible(id){ return !document.getElementById(id).classList.contains("hidden"); }
@@ -1172,6 +1232,11 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape" && !modalWrap.clas
 document.getElementById("clearFiltersBtn").addEventListener("click",()=>{
   searchInput.value=""; statusFilter.value="All"; categoryFilter.value="All"; cycleFilter.value="All"; claimableFilter.value="All"; stateFilter.value="All"; render();
 });
+document.getElementById("filterToggle").addEventListener("click",()=>{
+  const panel=document.getElementById("filterPanel");
+  const open = panel.classList.toggle("hidden")===false;
+  document.getElementById("filterToggle").classList.toggle("on", open);
+});
 [searchInput,sortSelect,statusFilter,categoryFilter,cycleFilter,claimableFilter,stateFilter].forEach(el=>el.addEventListener("input",render));
 [sortSelect,statusFilter,categoryFilter,cycleFilter,claimableFilter,stateFilter].forEach(el=>el.addEventListener("change",render));
 historyFilter.addEventListener("change", renderHistory);
@@ -1182,16 +1247,15 @@ document.getElementById("analyticsMonthlyBtn").addEventListener("click",()=>{ an
 document.getElementById("analyticsYearlyBtn").addEventListener("click",()=>{ analyticsMode="year"; document.getElementById("analyticsYearlyBtn").classList.add("active"); document.getElementById("analyticsMonthlyBtn").classList.remove("active"); renderCharts(); });
 
 subscriptionList.addEventListener("click", e=>{
-  const btn=e.target.closest("button[data-action]"); if(!btn)return;
-  const id=Number(btn.dataset.id), action=btn.dataset.action;
-  if(action==="paid") markPaid(id);
-  if(action==="remind") remindOne(id);
-  if(action==="edit") openEditModal(id);
-  if(action==="details"){ selectedSubscriptionId=id; showView("detail"); }
-  if(action==="delete"){
-    const s = subscriptions.find(x=>x.id===id);
-    if(s && confirm(`Delete "${s.name}" and all its payment history? This can't be undone.`)) removeSubscription(id);
+  if(Date.now() < suppressClickUntil) return;   // ignore the click that follows a swipe
+  const btn=e.target.closest("button[data-action]");
+  if(btn){
+    e.stopPropagation();
+    if(btn.dataset.action==="paid") markPaid(Number(btn.dataset.id));
+    return;
   }
+  const card=e.target.closest(".item-content");
+  if(card){ selectedSubscriptionId=Number(card.dataset.id); showView("detail"); }
 });
 
 document.getElementById("backToListBtn").addEventListener("click",()=>showView("subscriptions"));
