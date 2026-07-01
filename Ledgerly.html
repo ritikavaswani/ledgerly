@@ -91,6 +91,8 @@
     .screen-heading h2{margin:0;font-size:20px;font-weight:700;letter-spacing:-.01em}
     .screen-heading p{margin:0;font-size:12px;color:var(--muted)}
     .section-label{font-size:12px;font-weight:600;color:var(--muted);margin:16px 2px 8px;text-transform:uppercase;letter-spacing:.06em}
+    .sync-code-box{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-radius:12px;background:var(--primary-soft);border:1px solid var(--border)}
+    .sync-code{font-family:"Courier New",monospace;font-size:22px;font-weight:700;letter-spacing:.12em;color:var(--text);margin-top:2px}
     #filterToggle.on{background:var(--primary);color:#1a1024;border-color:transparent}
 
     .banner{display:flex;gap:10px;align-items:center;margin-top:12px;padding:10px 12px;border-radius:14px;border:1px solid var(--border);box-shadow:var(--shadow-sm);font-size:12.5px;line-height:1.35;background:var(--card)}
@@ -373,7 +375,33 @@
 
     <!-- HISTORY -->
     <section id="historyView" class="hidden">
-      <div class="screen-heading"><div><h2>History</h2><p>Reminders, backups, and payment records</p></div></div>
+      <div class="screen-heading"><div><h2>History</h2><p>Sync, reminders, backups, and payment records</p></div></div>
+
+      <div class="card chart-card" style="margin-bottom:12px;">
+        <div class="chart-title"><h3 class="heading-font">Sync across devices</h3></div>
+        <div class="helper" id="syncHelper" style="margin-bottom:10px;"></div>
+        <div class="inline-actions"><button id="enableSyncBtn">🔄 Enable sync</button></div>
+        <div id="syncActivePanel" class="hidden">
+          <div class="sync-code-box">
+            <div>
+              <div class="ss-label" style="text-align:left;">Your sync code</div>
+              <div id="syncCodeDisplay" class="sync-code">—</div>
+            </div>
+            <button class="btn-secondary btn-small" id="copyCodeBtn">Copy</button>
+          </div>
+          <div style="margin-top:10px;">
+            <div class="ss-label" style="text-align:left;margin-bottom:6px;">Connect this device to another</div>
+            <div style="display:flex;gap:8px;">
+              <input id="syncCodeInput" placeholder="Enter code from other device" style="flex:1" autocapitalize="characters" />
+              <button class="btn-secondary btn-small" id="connectDeviceBtn">Connect</button>
+            </div>
+          </div>
+          <div class="inline-actions" style="margin-top:10px;">
+            <button class="btn-secondary btn-small" id="syncNowBtn">Sync now</button>
+            <button class="btn-secondary btn-small" id="disableSyncBtn">Turn off</button>
+          </div>
+        </div>
+      </div>
 
       <div class="card chart-card" style="margin-bottom:12px;">
         <div class="chart-title"><h3 class="heading-font">Push notifications</h3></div>
@@ -548,6 +576,9 @@ const PUSH_CONFIG = {
 };
 const PUSH_ENABLED_KEY = "ledgerly-push-enabled";
 const USER_ID_KEY = "ledgerly-user-id";
+const SYNC_CODE_KEY = "ledgerly-sync-code";
+const SYNC_ENABLED_KEY = "ledgerly-sync-enabled";
+const DATA_UPDATED_KEY = "ledgerly-updated-at";
 
 const defaultData = [
   { id:1, name:"Netflix", amount:27.99, billingCycle:"Monthly", category:"Personal", analyticsOnly:false, claimablePercent:0, lifecycleState:"Active", currentCycle:{ dueDate:"2026-04-15", status:"Due" }, payments:[] },
@@ -589,7 +620,7 @@ function normaliseSubscription(item){
     currentCycle: item.currentCycle || { dueDate:item.dueDate || todayString(), status:"Upcoming" },
     payments: item.payments || [] };
 }
-function saveData(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(subscriptions)); localStorage.setItem(SEED_KEY,"1"); if(typeof syncPush==="function") syncPush(); }
+function saveData(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(subscriptions)); localStorage.setItem(SEED_KEY,"1"); if(typeof syncPush==="function") syncPush(); if(typeof pushData==="function") pushData(); }
 
 /* ---------- dates ---------- */
 function nzDateParts(){
@@ -921,6 +952,107 @@ function updatePushHelper(){
     helper.textContent="You'll get a real notification when payments are due — even when Ledgerly is closed.";
   } else {
     helper.textContent="Get a real notification when a subscription is due, even when the app is closed. (iPhone: Add to Home Screen first.)";
+  }
+}
+
+/* ---------- cross-device sync ---------- */
+let pushDataTimer = null;
+function genSyncCode(){
+  const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"; // no confusing 0/O/1/I/L
+  let out = "";
+  for(let i=0;i<8;i++){ out += chars[Math.floor(Math.random()*chars.length)]; if(i===3) out += "-"; }
+  return out;
+}
+function getSyncCode(){
+  let c = localStorage.getItem(SYNC_CODE_KEY);
+  if(!c){ c = genSyncCode(); localStorage.setItem(SYNC_CODE_KEY, c); }
+  return c;
+}
+function syncConfigured(){ return !!PUSH_CONFIG.backendUrl; }
+function syncOn(){ return syncConfigured() && localStorage.getItem(SYNC_ENABLED_KEY)==="1"; }
+function localUpdatedAt(){ return Number(localStorage.getItem(DATA_UPDATED_KEY) || 0); }
+
+// Save data locally without triggering an outbound push (used when adopting server data).
+function persistLocal(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(subscriptions)); localStorage.setItem(SEED_KEY,"1"); }
+
+function pushData(){
+  if(!syncOn()) return;
+  clearTimeout(pushDataTimer);
+  pushDataTimer = setTimeout(async () => {
+    const updatedAt = Date.now();
+    localStorage.setItem(DATA_UPDATED_KEY, String(updatedAt));
+    try {
+      await fetch(pushApi("/data/push"), { method:"POST", headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ code:getSyncCode(), subscriptions, updatedAt }) });
+    } catch(e){ /* offline — will resend on next change */ }
+  }, 600);
+}
+async function pullData(force){
+  if(!syncOn()) return false;
+  try {
+    const res = await fetch(pushApi("/data/pull"), { method:"POST", headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ code:getSyncCode() }) });
+    if(!res.ok) return false;
+    const data = await res.json();
+    if(Array.isArray(data.subscriptions) && (force || data.updatedAt > localUpdatedAt())){
+      subscriptions = data.subscriptions.map(normaliseSubscription);
+      localStorage.setItem(DATA_UPDATED_KEY, String(data.updatedAt || Date.now()));
+      recalculateStatuses(); persistLocal(); syncAll();
+      return true;
+    }
+  } catch(e){ /* offline */ }
+  return false;
+}
+async function enableSync(){
+  if(!syncConfigured()){ alert("Set up the backend first (push-backend/README.md), then paste your Worker URL into PUSH_CONFIG."); return; }
+  localStorage.setItem(SYNC_ENABLED_KEY,"1");
+  getSyncCode();
+  // Adopt server data if it already exists for this code; otherwise seed the server with local data.
+  const pulled = await pullData(false);
+  if(!pulled) pushData();
+  updateSyncUI(); toast("Sync enabled ✓");
+}
+function disableSync(){ localStorage.removeItem(SYNC_ENABLED_KEY); updateSyncUI(); toast("Sync turned off"); }
+async function connectDevice(){
+  const input = document.getElementById("syncCodeInput");
+  const code = (input.value || "").trim().toUpperCase();
+  if(!code){ alert("Enter the sync code shown on your other device."); return; }
+  if(!confirm("Connect to that device's data? This replaces what's currently on THIS device with the synced copy.")) return;
+  localStorage.setItem(SYNC_CODE_KEY, code);
+  localStorage.setItem(SYNC_ENABLED_KEY,"1");
+  localStorage.setItem(DATA_UPDATED_KEY,"0"); // force adopt
+  const pulled = await pullData(true);
+  input.value = "";
+  updateSyncUI();
+  toast(pulled ? "Connected — data synced ✓" : "Connected. No data found for that code yet.");
+}
+async function syncNow(){
+  if(!syncOn()){ return; }
+  const pulled = await pullData(false);
+  if(!pulled) pushData();
+  toast("Synced ✓");
+}
+function updateSyncUI(){
+  const codeEl = document.getElementById("syncCodeDisplay");
+  const helper = document.getElementById("syncHelper");
+  const enableBtn = document.getElementById("enableSyncBtn");
+  const panel = document.getElementById("syncActivePanel");
+  if(!helper || !enableBtn) return;
+  if(!syncConfigured()){
+    helper.innerHTML = 'Needs the free backend. See <strong>push-backend/README.md</strong>, then paste your Worker URL into the app.';
+    enableBtn.disabled = true; if(panel) panel.classList.add("hidden");
+    return;
+  }
+  enableBtn.disabled = false;
+  if(syncOn()){
+    enableBtn.classList.add("hidden");
+    if(panel) panel.classList.remove("hidden");
+    if(codeEl) codeEl.textContent = getSyncCode();
+    helper.textContent = "This device is syncing. To add another device, enter this code there.";
+  } else {
+    enableBtn.classList.remove("hidden");
+    if(panel) panel.classList.add("hidden");
+    helper.textContent = "Keep your subscriptions in sync across your phone, tablet and computer — no account, just a code.";
   }
 }
 
@@ -1274,15 +1406,28 @@ document.getElementById("importFile").addEventListener("change", e=>{ if(e.targe
 document.getElementById("reminderBtn").addEventListener("click", requestReminders);
 document.getElementById("remindAllBtn").addEventListener("click", remindAll);
 document.getElementById("pushBtn").addEventListener("click", enablePush);
+document.getElementById("enableSyncBtn").addEventListener("click", enableSync);
+document.getElementById("disableSyncBtn").addEventListener("click", disableSync);
+document.getElementById("connectDeviceBtn").addEventListener("click", connectDevice);
+document.getElementById("syncNowBtn").addEventListener("click", syncNow);
+document.getElementById("copyCodeBtn").addEventListener("click", () => {
+  const code = getSyncCode();
+  if(navigator.clipboard) navigator.clipboard.writeText(code).then(()=>toast("Code copied ✓")).catch(()=>toast(code));
+  else toast(code);
+});
 window.addEventListener("resize",()=>{ if(isVisible("analyticsView")) renderCharts(); });
+// Pull other devices' changes when the app regains focus.
+document.addEventListener("visibilitychange", ()=>{ if(!document.hidden) pullData(false); });
 
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
 
 initTheme();
 updateReminderHelper();
 updatePushHelper();
+updateSyncUI();
 render();
 checkDueReminders(false);
+pullData(false);   // on launch, adopt newer data from other devices
 </script>
 </body>
 </html>
